@@ -2,7 +2,7 @@
 
 all: chatclient
 
-ChatClient: chatclient.c
+chatclient: chatclient.c
 	gcc -Wall -g -o chatclient chatclient.c
 
 clean:
