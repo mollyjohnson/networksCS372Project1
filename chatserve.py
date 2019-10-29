@@ -6,9 +6,7 @@ from socket import *
 import sys
 
 serverPort = int(sys.argv[1]) 
-print('my arg entered is: ')
-print(serverPort)
-print('\n')
+print('my arg entered is: ' + str(serverPort))
 serverSocket = socket(AF_INET, SOCK_STREAM)
 serverSocket.bind(('', serverPort))
 serverSocket.listen(1)
