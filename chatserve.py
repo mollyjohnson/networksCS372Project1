@@ -33,7 +33,7 @@ def ArgCheck():
 #description:
 def main():
 	
-	#check user entered correct arguments
+	#check user entered correct port number argument
 	ArgCheck()
 
 	#convert system arg 1 (string) to an int for the server port number
