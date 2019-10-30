@@ -29,7 +29,9 @@
 #define TRUE 1
 
 /*
-
+pre-conditions:
+post-conditions:
+description:
 */
 int main(){
 
