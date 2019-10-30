@@ -25,7 +25,7 @@ def ArgCheck():
 		#valid port values excerpted from:
 		#https://www.webopedia.com/quick_ref/portnumbers.asp
 		elif int(sys.argv[1]) > 65535:
-			print('You entered a port number outside the valid port number range. Must enter a valid port number. Start the program again.')
+			print('You entered a port number above the valid port number range. Must enter a valid port number. Start the program again.')
 			exit()
 
 #pre-conditions:
@@ -41,7 +41,6 @@ def main():
 	#https://stackoverflow.com/questions/4033723/how-do-i-access-command-line-arguments-in-python
 	#converting a string to an int adapted from:
 	#https://www.digitalocean.com/community/tutorials/how-to-convert-data-types-in-python-3
-
 	serverPort = int(sys.argv[1]) 
 	print('server port entered is: ' + str(serverPort))
 	
