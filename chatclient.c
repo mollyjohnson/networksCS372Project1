@@ -21,12 +21,10 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <sys/ioctl.h>
+#include <stdbool.h>
 
 //macro definitions
 
-//define true and false as C has no bool values
-#define FALSE 0
-#define TRUE 1
 
 /*
 pre-conditions:
