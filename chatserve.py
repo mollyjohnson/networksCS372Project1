@@ -52,11 +52,11 @@ def main():
 	serverSocket.bind((hostAddress, serverPort))
 	serverSocket.listen(1)
 	print('The server is ready to receive')
-	while(1):
+	while True:
 		connectionSocket, addr = serverSocket.accept()
-		sentence = connectionSocket.recv(1024)
+		sentence = connectionSocket.recv(1024).decode()
 		capitalizedSentence = sentence.upper()
-		connectionSocket.send(capitalizedSentence)
+		connectionSocket.send(capitalizedSentence.encode())
 		connectionSocket.close()
 
 #used to call the main function
