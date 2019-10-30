@@ -52,10 +52,13 @@ def main():
 	serverSocket.bind((hostAddress, serverPort))
 	serverSocket.listen(1)
 	print('The server is ready to receive')
+
+	maxMessageSize = 501
+
 	while True:
 		connectionSocket, addr = serverSocket.accept()
-		sentence = connectionSocket.recv(1024).decode()
-		capitalizedSentence = sentence.upper()
+		clientMessage = connectionSocket.recv(maxMessageSize).decode()
+		capitalizedSentence = clientMessage.upper()
 		connectionSocket.send(capitalizedSentence.encode())
 		connectionSocket.close()
 
