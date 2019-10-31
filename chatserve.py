@@ -14,19 +14,18 @@ def ArgCheck():
 	if len(sys.argv) != 2:
 		print('Wrong number of arguments! Must enter a valid port number. Start the program again.')
 		exit()
-	else:
-		#else if there's the right nuber of arguments, make sure the argument is a valid port number.
-		#using isdigit() to check if a string represents a non-negative integer adapted from:
-		#https://stackoverflow.com/questions/1265665/how-can-i-check-if-a-string-represents-an-int-without-using-try-except
-		if sys.argv[1].isdigit() == False:
-			print('You entered a negative integer or string for the port number! Must enter a valid port number. Start the program again.')
-			exit()
-		#if a non-neg integer was entered, check it's in valid port num range. valid port number range: 0-65535
-		#valid port values excerpted from:
-		#https://www.webopedia.com/quick_ref/portnumbers.asp
-		elif int(sys.argv[1]) > 65535:
-			print('You entered a port number above the valid port number range. Must enter a valid port number. Start the program again.')
-			exit()
+	#else if there's the right nuber of arguments, make sure the argument is a valid port number.
+	#using isdigit() to check if a string represents a non-negative integer adapted from:
+	#https://stackoverflow.com/questions/1265665/how-can-i-check-if-a-string-represents-an-int-without-using-try-except
+	if sys.argv[1].isdigit() == False:
+		print('You entered a negative integer or string for the port number! Must enter a valid port number. Start the program again.')
+		exit()
+	#if a non-neg integer was entered, check it's in valid port num range. valid port number range: 0-65535
+	#valid port values excerpted from:
+	#https://www.webopedia.com/quick_ref/portnumbers.asp
+	elif int(sys.argv[1]) > 65535:
+		print('You entered a port number above the valid port number range. Must enter a valid port number. Start the program again.')
+		exit()
 
 #pre-conditions:
 #post-conditions:

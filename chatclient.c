@@ -25,6 +25,23 @@
 
 //macro definitions
 #define MAX_MESSAGE_SIZE 501
+#define HOST_ADDRESS "flip1.engr.oregonstate.edu"
+
+/*
+pre-conditions:
+post-conditions:
+description:
+*/
+bool StringMatch(char *string1, char *string2){
+	//use strcmp to see if string one and two are equal. if equal, strcmp will return 0.
+	//strcmp will return non-zero if the two strings are not equal.
+	if(strcmp(string1, string2) == 0){
+		//if the two strings are a match, return true
+		return true;
+	}
+	//if the two strings are not a match, return false
+	return false;
+}
 
 /*
 pre-conditions:
@@ -52,34 +69,6 @@ bool IntInputValidation(char *inputString){
 	return true;
 }
 
-
-/*
-pre-conditions:
-post-conditions:
-description:
-*/  
-bool CharInputValidation(char *inputString){
-    //create variables for char to be checked, and length of the input string
-	char asciiValue;
-	int k;
-	int stringLength = strlen(inputString);
-
-	//check each char of the string to see if matches one of the valid chars
-	for(k = 0; k < stringLength; k++)
-	{
-		//check if the current char is within the valid ascii values for uppercase letters (ascii 65-90) or is a space char
-		//(also valid for this assignment per the instructions)
-		asciiValue = inputString[k];
-		//if current char is outside of ascii range for uppercase letters AND is not a space char, return false
-		if((asciiValue < 65 || asciiValue > 90) && (asciiValue != 32)){
-			return true;
-		}
-	}
-	//if all chars in the string were valid uppercase letters or space chars, return true
-	return false;
-}
-
-
 /*
 pre-conditions:
 post-conditions:
@@ -91,9 +80,16 @@ void ArgCheck(int argCount, char *args[])
         fprintf(stderr, "Wrong number of arguments! Must enter the correct hostname and a valid port number. Start the program again.\n");
         fflush(stdout); exit(1);    
     }
-    else{
-        printf("you're in argcheck w right num of args\n");
-    }
+	//using atoi to convert from string to int adapted from:
+	//https://www.quora.com/How-do-I-convert-character-value-to-integer-value-in-c-language
+	if ((!IntInputValidation(args[2])) || (atoi(args[2]) < 0 ) || (atoi(args[2]) > 65535)){
+		fprintf(stderr, "You entered a negative number, string or otherwise invalid port number argument. Start the program again.\n");
+       	fflush(stdout); exit(1);    
+	}
+	if (!StringMatch(args[1], HOST_ADDRESS)){
+		fprintf(stderr, "Your host argument doesn't match the server host. Start the program again and use flip1.engr.oregonstate.edu as your host.\n");
+       	fflush(stdout); exit(1);    
+	}
 }
 
 /*
