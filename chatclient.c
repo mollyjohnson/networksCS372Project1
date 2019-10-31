@@ -35,7 +35,7 @@ pre-conditions:
 post-conditions:
 description:
 */
-bool StringMatch(char *string1, char *string2){
+int StringMatch(char *string1, char *string2){
 	//use strcmp to see if string one and two are equal. if equal, strcmp will return 0.
 	//strcmp will return non-zero if the two strings are not equal.
 	if(strcmp(string1, string2) == 0){
@@ -51,7 +51,7 @@ pre-conditions:
 post-conditions:
 description:
 */  
-bool IntInputValidation(char *inputString){
+int IntInputValidation(char *inputString){
 //create variables for char to be checked, loop counter, and length of the input string
 	char asciiValue;
 	int inputLength = strlen(inputString);
