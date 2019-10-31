@@ -58,6 +58,7 @@ def main():
 		connectionSocket, addr = serverSocket.accept()
 		clientMessage = connectionSocket.recv(maxMessageSize).decode()
 		capitalizedSentence = clientMessage.upper()
+		print("the capitalized sentence in python prior to sending to client is: " + capitalizedSentence)
 		connectionSocket.send(capitalizedSentence.encode())
 		connectionSocket.close()
 
