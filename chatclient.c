@@ -100,5 +100,8 @@ description:
 int main(int argc, char *argv[]){
     ArgCheck(argc, argv);
 
+	int portNum = atoi(argv[2]);
+	char *hostAddress = argv[1];
+
     return 0;
 }
