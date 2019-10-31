@@ -107,8 +107,10 @@ int main(int argc, char *argv[]){
 	//https://www.quora.com/How-do-I-convert-character-value-to-integer-value-in-c-language
 	int portNum = atoi(argv[2]);
 	char *hostAddress = argv[1];
-	char buffer[MAX_MESSAGE_SIZE];
-	memset(buffer, '\0', sizeof(buffer));
+	char sendBuffer[MAX_MESSAGE_SIZE];
+	char recvBuffer[MAX_MESSAGE_SIZE];
+	memset(sendBuffer, '\0', sizeof(sendBuffer));
+	memset(recvBuffer, '\0', sizeof(recvBuffer));
 
 	int socketFD, charsWritten, charsRead;
 	struct sockaddr_in serverAddress;
@@ -138,8 +140,8 @@ int main(int argc, char *argv[]){
 		fprintf(stderr, "Error connecting to the server on specified port.\n"); fflush(stdout); exit(1);
 	}
 
-	//strcat(buffer, "hello world\n");
-	//charsWritten = send(socketFD, )
+	strcat(sendBuffer, "hello world\n");
+
 
 	printf("about to close socket\n");
 	close(socketFD);
