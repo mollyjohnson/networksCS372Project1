@@ -22,6 +22,7 @@
 #include <netdb.h>
 #include <sys/ioctl.h>
 #include <stdbool.h>
+#include <arpa/inet.h>
 
 //macro definitions
 #define MAX_MESSAGE_SIZE 501
@@ -100,8 +101,46 @@ description:
 int main(int argc, char *argv[]){
     ArgCheck(argc, argv);
 
+	//using atoi to convert from string to int adapted from:
+	//https://www.quora.com/How-do-I-convert-character-value-to-integer-value-in-c-language
 	int portNum = atoi(argv[2]);
 	char *hostAddress = argv[1];
+	char buffer[MAX_MESSAGE_SIZE];
+	memset(buffer, '\0', sizeof(buffer));
+
+	int socketFD, charsWritten, charsRead;
+	struct sockaddr_in serverAddress;
+	struct hostent* serverHostInfo;
+	memset((char*)&serverAddress, '\0', sizeof(serverAddress));
+	serverAddress.sin_family = AF_INET;
+	serverAddress.sin_port = htons(portNum);
+	serverHostInfo = gethostbyname(hostAddress);
+
+	if(serverHostInfo == NULL){
+		fprintf(stderr, "Error, no such host.\n"); fflush(stdout); exit(1);
+	}
+
+	memcpy((char*)&serverAddress.sin_addr.s_addr, (char*)serverHostInfo->h_addr, serverHostInfo->h_length); // Copy in the address
+
+	// Set up the socket
+	socketFD = socket(AF_INET, SOCK_STREAM, 0); // Create the socket
+
+	//check that the socket could be opened. if not, print error message to stderr and
+	////exit w non zero exit value
+	if(socketFD < 0){
+		fprintf(stderr, "Error opening socket.\n"); fflush(stdout); exit(1);
+	}
+	
+	// Connect to server and check that the client could connect to the server on the specified port
+	if(connect(socketFD, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0){
+		fprintf(stderr, "Error connecting to the server on specified port.\n"); fflush(stdout); exit(1);
+	}
+
+	//strcat(buffer, "hello world\n");
+	//charsWritten = send(socketFD, )
+
+	printf("about to close socket\n");
+	close(socketFD);
 
     return 0;
 }
