@@ -105,7 +105,8 @@ int main(int argc, char *argv[]){
 		
 	//using atoi to convert from string to int adapted from:
 	//https://www.quora.com/How-do-I-convert-character-value-to-integer-value-in-c-language
-	int portNum = atoi(argv[2]);
+	char const *portNum = argv[2];
+	printf("the port num string is: %s\n", portNum);
 	char *hostAddress = argv[1];
 	char sendBuffer[MAX_MESSAGE_SIZE];
 	char recvBuffer[MAX_MESSAGE_SIZE];
@@ -113,7 +114,33 @@ int main(int argc, char *argv[]){
 	memset(recvBuffer, '\0', sizeof(recvBuffer));
 
 	//modern socket setup from beej's guide
-	
+	int status, socketFD, statusConnect, charsWritten, charsRead;
+	struct addrinfo hints;
+	struct addrinfo *servinfo;
+
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags = AI_PASSIVE;
+
+	status = getaddrinfo(hostAddress, portNum, &hints, &servinfo);
+
+	if (status < 0){
+		fprintf(stderr, "Error getting address info.\n"); fflush(stdout); exit(1);
+	}	
+
+	//int socket(PF_INET, SOCK_STREAM, getprotobyname("tcp"));
+	socketFD = socket(servinfo->ai_family, servinfo->ai_socktype, servinfo->ai_protocol);
+
+	if (socketFD < 0){
+		fprintf(stderr, "Error creating socket descriptor.\n"); fflush(stdout); exit(1);
+	}	
+
+	statusConnect = connect(socketFD, servinfo->ai_addr, servinfo->ai_addrlen);
+
+	if (statusConnect < 0){
+		fprintf(stderr, "Error connecting to server.\n"); fflush(stdout); exit(1);
+	}
 
 	strcat(sendBuffer, "i love kermit");
 	charsWritten = send(socketFD, sendBuffer, strlen(sendBuffer), 0);
@@ -146,6 +173,7 @@ int main(int argc, char *argv[]){
 
 	printf("about to close socket\n");
 	close(socketFD);
+	freeaddrinfo(servinfo);
 
     return 0;
 }
