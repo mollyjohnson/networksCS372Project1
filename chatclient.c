@@ -27,6 +27,8 @@
 //macro definitions
 #define MAX_MESSAGE_SIZE 501
 #define HOST_ADDRESS "flip1.engr.oregonstate.edu"
+#define TRUE 1
+#define FALSE 0
 
 /*
 pre-conditions:
@@ -38,10 +40,10 @@ bool StringMatch(char *string1, char *string2){
 	//strcmp will return non-zero if the two strings are not equal.
 	if(strcmp(string1, string2) == 0){
 		//if the two strings are a match, return true
-		return true;
+		return TRUE;
 	}
 	//if the two strings are not a match, return false
-	return false;
+	return FALSE;
 }
 
 /*
@@ -63,11 +65,11 @@ bool IntInputValidation(char *inputString){
 		//check if the current char is within the valid ascii values for ints 0-9 (i.e. ascii values 48-57)
 		if((asciiValue < 48) || (asciiValue > 57)){
 			//if ascii value of char being checked is outside of the range for integers, return false
-			return false;
+			return FALSE;
 		}
 	}
 	//if all of the chars in the string to be checked were valid integers, return true
-	return true;
+	return TRUE;
 }
 
 /*
