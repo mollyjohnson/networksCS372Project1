@@ -102,7 +102,7 @@ description:
 */
 int main(int argc, char *argv[]){
     ArgCheck(argc, argv);
-
+		
 	//using atoi to convert from string to int adapted from:
 	//https://www.quora.com/How-do-I-convert-character-value-to-integer-value-in-c-language
 	int portNum = atoi(argv[2]);
