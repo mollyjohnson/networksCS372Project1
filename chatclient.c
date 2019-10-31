@@ -120,7 +120,7 @@ int main(int argc, char *argv[]){
 	serverAddress.sin_port = htons(portNum);
 	serverHostInfo = gethostbyname(hostAddress);
 
-	if(serverHostInfo == NULL){
+	if (serverHostInfo == NULL){
 		fprintf(stderr, "Error, no such host.\n"); fflush(stdout); exit(1);
 	}
 
@@ -131,17 +131,43 @@ int main(int argc, char *argv[]){
 
 	//check that the socket could be opened. if not, print error message to stderr and
 	////exit w non zero exit value
-	if(socketFD < 0){
+	if (socketFD < 0){
 		fprintf(stderr, "Error opening socket.\n"); fflush(stdout); exit(1);
 	}
 	
 	// Connect to server and check that the client could connect to the server on the specified port
-	if(connect(socketFD, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0){
+	if (connect(socketFD, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0){
 		fprintf(stderr, "Error connecting to the server on specified port.\n"); fflush(stdout); exit(1);
 	}
 
-	strcat(sendBuffer, "hello world\n");
+	strcat(sendBuffer, "i love kermit");
+	charsWritten = send(socketFD, sendBuffer, strlen(sendBuffer), 0);
 
+	if (charsWritten < 0){
+		fprintf(stderr, "Error writing to socket.\n"); fflush(stdout); exit(1);
+	}
+
+	if (charsWritten < strlen(sendBuffer)){
+		fprintf(stderr, "Warning: some, but not all data written to socket.\n"); fflush(stdout); exit(1);
+	}
+
+	int checkSend = -5;
+
+	do{
+		ioctl(socketFD, TIOCOUTQ, &checkSend);
+	} while(checkSend > 0);
+
+	if (checkSend < 0){
+		fprintf(stderr, "Ioctl error.\n"); fflush(stdout); exit(1);
+	}
+
+	charsRead = recv(socketFD, recvBuffer, sizeof(recvBuffer) - 1, 0);
+
+	if (charsRead < 0){
+		fprintf(stderr, "Error reading from the socket.\n"); fflush(stdout); exit(1);
+	}
+
+	printf("%s\n", recvBuffer); fflush(stdout);
 
 	printf("about to close socket\n");
 	close(socketFD);
