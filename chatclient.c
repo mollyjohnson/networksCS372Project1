@@ -117,44 +117,36 @@ int main(int argc, char *argv[]){
 	int status, socketFD, statusConnect, charsWritten, charsRead;
 	struct addrinfo hints;
 	struct addrinfo *servinfo;
-
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
 
 	status = getaddrinfo(hostAddress, portNum, &hints, &servinfo);
-
 	if (status < 0){
 		fprintf(stderr, "Error getting address info.\n"); fflush(stdout); exit(1);
 	}	
 
-	//int socket(PF_INET, SOCK_STREAM, getprotobyname("tcp"));
 	socketFD = socket(servinfo->ai_family, servinfo->ai_socktype, servinfo->ai_protocol);
-
 	if (socketFD < 0){
 		fprintf(stderr, "Error creating socket descriptor.\n"); fflush(stdout); exit(1);
 	}	
 
 	statusConnect = connect(socketFD, servinfo->ai_addr, servinfo->ai_addrlen);
-
 	if (statusConnect < 0){
 		fprintf(stderr, "Error connecting to server.\n"); fflush(stdout); exit(1);
 	}
 
 	strcat(sendBuffer, "i love kermit");
 	charsWritten = send(socketFD, sendBuffer, strlen(sendBuffer), 0);
-
 	if (charsWritten < 0){
 		fprintf(stderr, "Error writing to socket.\n"); fflush(stdout); exit(1);
 	}
-
 	if (charsWritten < strlen(sendBuffer)){
 		fprintf(stderr, "Warning: some, but not all data written to socket.\n"); fflush(stdout); exit(1);
 	}
 
 	int checkSend = -5;
-
 	do{
 		ioctl(socketFD, TIOCOUTQ, &checkSend);
 	} while(checkSend > 0);
@@ -164,14 +156,13 @@ int main(int argc, char *argv[]){
 	}
 
 	charsRead = recv(socketFD, recvBuffer, sizeof(recvBuffer) - 1, 0);
-
 	if (charsRead < 0){
 		fprintf(stderr, "Error reading from the socket.\n"); fflush(stdout); exit(1);
 	}
 
 	printf("%s\n", recvBuffer); fflush(stdout);
-
 	printf("about to close socket\n");
+
 	close(socketFD);
 	freeaddrinfo(servinfo);
 
