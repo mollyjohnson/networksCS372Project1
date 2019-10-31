@@ -112,33 +112,8 @@ int main(int argc, char *argv[]){
 	memset(sendBuffer, '\0', sizeof(sendBuffer));
 	memset(recvBuffer, '\0', sizeof(recvBuffer));
 
-	int socketFD, charsWritten, charsRead;
-	struct sockaddr_in serverAddress;
-	struct hostent* serverHostInfo;
-	memset((char*)&serverAddress, '\0', sizeof(serverAddress));
-	serverAddress.sin_family = AF_INET;
-	serverAddress.sin_port = htons(portNum);
-	serverHostInfo = gethostbyname(hostAddress);
-
-	if (serverHostInfo == NULL){
-		fprintf(stderr, "Error, no such host.\n"); fflush(stdout); exit(1);
-	}
-
-	memcpy((char*)&serverAddress.sin_addr.s_addr, (char*)serverHostInfo->h_addr, serverHostInfo->h_length); // Copy in the address
-
-	// Set up the socket
-	socketFD = socket(AF_INET, SOCK_STREAM, 0); // Create the socket
-
-	//check that the socket could be opened. if not, print error message to stderr and
-	////exit w non zero exit value
-	if (socketFD < 0){
-		fprintf(stderr, "Error opening socket.\n"); fflush(stdout); exit(1);
-	}
+	//modern socket setup from beej's guide
 	
-	// Connect to server and check that the client could connect to the server on the specified port
-	if (connect(socketFD, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) < 0){
-		fprintf(stderr, "Error connecting to the server on specified port.\n"); fflush(stdout); exit(1);
-	}
 
 	strcat(sendBuffer, "i love kermit");
 	charsWritten = send(socketFD, sendBuffer, strlen(sendBuffer), 0);
