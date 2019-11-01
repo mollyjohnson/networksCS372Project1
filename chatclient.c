@@ -26,6 +26,7 @@
 
 //macro definitions
 #define MAX_MESSAGE_SIZE 501
+#define MAX_MSG_PLUS_HANDLE 514
 #define HOST_ADDRESS "flip1.engr.oregonstate.edu"
 #define MAX_HANDLE_SIZE 11
 #define TRUE 1
@@ -215,8 +216,8 @@ int main(int argc, char *argv[]){
 	char *hostAddress = argv[1];
 	int goodHandle = FALSE;
 	char userHandle[MAX_HANDLE_SIZE];
-	char sendBuffer[MAX_MESSAGE_SIZE];
-	char recvBuffer[MAX_MESSAGE_SIZE];
+	char sendBuffer[MAX_MSG_PLUS_HANDLE];
+	char recvBuffer[MAX_MSG_PLUS_HANDLE];
 	memset(userHandle, '\0', sizeof(userHandle));
 	memset(sendBuffer, '\0', sizeof(sendBuffer));
 	memset(recvBuffer, '\0', sizeof(recvBuffer));

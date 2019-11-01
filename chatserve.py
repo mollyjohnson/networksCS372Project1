@@ -53,11 +53,12 @@ def main():
 	print('The server is ready to receive')
 
 	maxMessageSize = 501
+	maxMsgPlusHandle = 514
 	serverHandle = "kermit"
 
 	while True:
 		connectionSocket, addr = serverSocket.accept()
-		clientMessage = connectionSocket.recv(maxMessageSize).decode()
+		clientMessage = connectionSocket.recv(maxMsgPlusHandle).decode()
 		print("the client message prior to sending is: " + clientMessage)
 		connectionSocket.send(clientMessage.encode())
 		connectionSocket.close()
