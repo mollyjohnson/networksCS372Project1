@@ -27,6 +27,7 @@
 //macro definitions
 #define MAX_MESSAGE_SIZE 501
 #define HOST_ADDRESS "flip1.engr.oregonstate.edu"
+#define MAX_HANDLE_SIZE 11
 #define TRUE 1
 #define FALSE 0
 
@@ -44,6 +45,21 @@ int StringMatch(char *string1, char *string2){
 	}
 	//if the two strings are not a match, return false
 	return FALSE;
+}
+
+/*
+pre-conditions:
+post-conditions:
+description:
+*/
+int IsNewline(char *userInputIn){
+	//call StringMatch to check if the user input string is just a newline character.
+	if(StringMatch(userInputIn, "\n") == TRUE){
+		//if it is, return true
+		return TRUE;
+	}
+	//else, return false
+	return FALSE;	
 }
 
 /*
@@ -100,6 +116,76 @@ pre-conditions:
 post-conditions:
 description:
 */
+int GetHandle(char *userHandleIn){
+	//create buffer of size MAX_CHARS (2048 as given in the assignment instructions plus one for null terminator)
+	char *buffer;
+	size_t bufsize = MAX_HANDLE_SIZE;
+	size_t characters;
+	int goodInput = TRUE;
+
+	//malloc the buffer and check that malloc is successful
+	buffer = (char *)malloc(bufsize * sizeof(char));
+
+	//if buffer == NULL, malloc had an error. print error message and exit with value of 1.
+	if(buffer == NULL){
+		perror("GETLINE BUFFER ERROR, UNABLE TO ALLOCATE\n");
+		exit(1);
+	}
+
+	//keep looping (by using while(1)) to get the line of user input. check for if getline returns -1
+	//is used to make sure getline doesn't encounter any problems due to signals
+	while(1){
+		//call getline to get user input from stdin and put it in the buffer
+		characters = getline(&buffer, &bufsize, stdin);
+
+		//check if getline returned -1
+		if(characters == -1){
+			//if getline returned -1, use clearerr on stdin and let it loop back around
+			clearerr(stdin);
+		}
+		else{
+			//else if getline was successful (didn't return -1), go ahead and break out of loop
+			break;
+		}
+	}
+
+	if(IsNewline(buffer) == FALSE){
+		if(strlen(buffer) > MAX_HANDLE_SIZE){
+			strcpy(userHandleIn, "Error");
+			printf("Error, your handle was too long. Please try again.\n");
+			goodInput = FALSE;
+		}
+			else{
+			//if user didn't enter any of these types of input, remove the newline char from the buffer,
+			//replacing it with a null terminating character
+			buffer[strcspn(buffer, "\n")] = '\0';
+	
+			//copy the buffer with the newline char removed into the userinput string variable
+			strcpy(userHandleIn, buffer);
+			}
+	}
+	else{
+		//else if the user did enter either a blank line, comment, or only a newline char, don't
+		//do anything with the buffer. set the user input string to NO_ACTION (since those types
+		//of inputs should result in no action taking place and the user being returned to
+		//the command line and re-prompted).
+		strcpy(userHandleIn, "Error");
+		printf("Error, you didn't enter a handle, you only hit enter. Please try again.\n");
+		goodInput = FALSE;
+	}
+	
+	//free the buffer that was malloc'd for getline and set to NULL
+	free(buffer);
+	buffer = NULL;
+
+	return goodInput;
+}
+
+/*
+pre-conditions:
+post-conditions:
+description:
+*/
 int main(int argc, char *argv[]){
     ArgCheck(argc, argv);
 		
@@ -107,8 +193,11 @@ int main(int argc, char *argv[]){
 	//https://www.quora.com/How-do-I-convert-character-value-to-integer-value-in-c-language
 	char const *portNum = argv[2];
 	char *hostAddress = argv[1];
+	int goodHandle = FALSE;
+	char userHandle[MAX_HANDLE_SIZE];
 	char sendBuffer[MAX_MESSAGE_SIZE];
 	char recvBuffer[MAX_MESSAGE_SIZE];
+	memset(userHandle, '\0', sizeof(userHandle));
 	memset(sendBuffer, '\0', sizeof(sendBuffer));
 	memset(recvBuffer, '\0', sizeof(recvBuffer));
 
@@ -120,6 +209,12 @@ int main(int argc, char *argv[]){
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
+
+	while (goodHandle == FALSE){
+		printf("Please enter your handle (one-word name up to 10 characters) and hit enter: ");
+		goodHandle = GetHandle(userHandle);
+	}
+	printf("the user handle is: %s\n", userHandle);
 
 	status = getaddrinfo(hostAddress, portNum, &hints, &servinfo);
 	if (status < 0){

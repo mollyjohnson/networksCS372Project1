@@ -53,13 +53,13 @@ def main():
 	print('The server is ready to receive')
 
 	maxMessageSize = 501
+	serverHandle = "kermit"
 
 	while True:
 		connectionSocket, addr = serverSocket.accept()
 		clientMessage = connectionSocket.recv(maxMessageSize).decode()
-		capitalizedSentence = clientMessage.upper()
-		print("the capitalized sentence in python prior to sending to client is: " + capitalizedSentence)
-		connectionSocket.send(capitalizedSentence.encode())
+		print("the client message prior to sending is: " + clientMessage)
+		connectionSocket.send(clientMessage.encode())
 		connectionSocket.close()
 
 #used to call the main function
