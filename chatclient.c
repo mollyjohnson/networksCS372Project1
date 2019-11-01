@@ -155,20 +155,16 @@ int GetHandle(char *userHandleIn){
 			printf("Error, your handle was too long. Please try again.\n");
 			goodInput = FALSE;
 		}
-			else{
-			//if user didn't enter any of these types of input, remove the newline char from the buffer,
-			//replacing it with a null terminating character
-			buffer[strcspn(buffer, "\n")] = '\0';
-	
-			//copy the buffer with the newline char removed into the userinput string variable
-			strcpy(userHandleIn, buffer);
-			}
+		else{
+		//user entered a valid handle, remove the newline char from the buffer, replacing it
+		//with a null terminating character
+		buffer[strcspn(buffer, "\n")] = '\0';
+
+		//copy the buffer with the newline char removed into the userHandle string variable
+		strcpy(userHandleIn, buffer);
+		}
 	}
 	else{
-		//else if the user did enter either a blank line, comment, or only a newline char, don't
-		//do anything with the buffer. set the user input string to NO_ACTION (since those types
-		//of inputs should result in no action taking place and the user being returned to
-		//the command line and re-prompted).
 		strcpy(userHandleIn, "Error");
 		printf("Error, you didn't enter a handle, you only hit enter. Please try again.\n");
 		goodInput = FALSE;
@@ -201,7 +197,6 @@ int main(int argc, char *argv[]){
 	memset(sendBuffer, '\0', sizeof(sendBuffer));
 	memset(recvBuffer, '\0', sizeof(recvBuffer));
 
-	//modern socket setup from beej's guide
 	int status, socketFD, statusConnect, charsWritten, charsRead;
 	struct addrinfo hints;
 	struct addrinfo *servinfo;
