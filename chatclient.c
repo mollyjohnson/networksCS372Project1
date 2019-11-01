@@ -181,6 +181,31 @@ pre-conditions:
 post-conditions:
 description:
 */
+void SocketWrite(int sockFD, char *sendBuf){
+	int charsW;
+	charsW = send(sockFD, sendBuf, strlen(sendBuf), 0);
+	if (charsW < 0){
+		fprintf(stderr, "Error writing to socket.\n"); fflush(stdout); exit(1);
+	}
+	if (charsW < strlen(sendBuf)){
+		fprintf(stderr, "Warning: some, but not all data written to socket.\n"); fflush(stdout); exit(1);
+	}
+
+	int checkSend = -5;
+	do{
+		ioctl(sockFD, TIOCOUTQ, &checkSend);
+	} while(checkSend > 0);
+
+	if (checkSend < 0){
+		fprintf(stderr, "Ioctl error.\n"); fflush(stdout); exit(1);
+	}
+}
+
+/*
+pre-conditions:
+post-conditions:
+description:
+*/
 int main(int argc, char *argv[]){
     ArgCheck(argc, argv);
 		
@@ -196,7 +221,7 @@ int main(int argc, char *argv[]){
 	memset(sendBuffer, '\0', sizeof(sendBuffer));
 	memset(recvBuffer, '\0', sizeof(recvBuffer));
 
-	int status, socketFD, statusConnect, charsWritten, charsRead;
+	int status, socketFD, statusConnect, charsRead;
 	struct addrinfo hints;
 	struct addrinfo *servinfo;
 	memset(&hints, 0, sizeof(hints));
@@ -226,22 +251,7 @@ int main(int argc, char *argv[]){
 	}
 
 	strcat(sendBuffer, "i love kermit");
-	charsWritten = send(socketFD, sendBuffer, strlen(sendBuffer), 0);
-	if (charsWritten < 0){
-		fprintf(stderr, "Error writing to socket.\n"); fflush(stdout); exit(1);
-	}
-	if (charsWritten < strlen(sendBuffer)){
-		fprintf(stderr, "Warning: some, but not all data written to socket.\n"); fflush(stdout); exit(1);
-	}
-
-	int checkSend = -5;
-	do{
-		ioctl(socketFD, TIOCOUTQ, &checkSend);
-	} while(checkSend > 0);
-
-	if (checkSend < 0){
-		fprintf(stderr, "Ioctl error.\n"); fflush(stdout); exit(1);
-	}
+	SocketWrite(socketFD, sendBuffer);
 
 	charsRead = recv(socketFD, recvBuffer, sizeof(recvBuffer) - 1, 0);
 	if (charsRead < 0){
