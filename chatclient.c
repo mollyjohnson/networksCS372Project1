@@ -106,7 +106,6 @@ int main(int argc, char *argv[]){
 	//using atoi to convert from string to int adapted from:
 	//https://www.quora.com/How-do-I-convert-character-value-to-integer-value-in-c-language
 	char const *portNum = argv[2];
-	printf("the port num string is: %s\n", portNum);
 	char *hostAddress = argv[1];
 	char sendBuffer[MAX_MESSAGE_SIZE];
 	char recvBuffer[MAX_MESSAGE_SIZE];
