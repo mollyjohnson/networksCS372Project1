@@ -68,7 +68,7 @@ post-conditions:
 description:
 */  
 int IntInputValidation(char *inputString){
-//create variables for char to be checked, loop counter, and length of the input string
+	//create variables for char to be checked, loop counter, and length of the input string
 	char asciiValue;
 	int inputLength = strlen(inputString);
 	int i;
@@ -93,8 +93,7 @@ pre-conditions:
 post-conditions:
 description:
 */
-void ArgCheck(int argCount, char *args[])
-{
+void ArgCheck(int argCount, char *args[]){
     if (argCount != 3){
         fprintf(stderr, "Wrong number of arguments! Must enter the correct hostname and a valid port number. Start the program again.\n");
         fflush(stdout); exit(1);    
