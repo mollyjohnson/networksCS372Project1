@@ -334,7 +334,7 @@ int main(int argc, char *argv[]){
 		if (charsRead < 0){
 			fprintf(stderr, "Error reading from the socket.\n"); fflush(stdout); exit(1);
 		}
-		printf("the message received is: %s\n", recvBuffer); fflush(stdout);
+		printf("%s\n", recvBuffer); fflush(stdout);
 	
 		if (strstr(sendBuffer, "\\quit") == NULL){
 			memset(sendBuffer, '\0', sizeof(sendBuffer));
