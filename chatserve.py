@@ -63,8 +63,7 @@ def main():
 	serverSocket.listen(1)
 
 	maxMsgPlusHandle = 514
-	#serverHandle = "chloe_cat"
-	serverHandle = "server"
+	serverHandle = "chloe_cat"
 
 	while True:
 		connectionSocket, addr = serverSocket.accept()
