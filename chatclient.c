@@ -284,7 +284,6 @@ int main(int argc, char *argv[]){
 	char *hostAddress = argv[1];
 	int goodHandle = FALSE;
 	int goodMessage = FALSE;
-	int LIMITER = 0;
 	char userHandle[MAX_HANDLE_SIZE];
 	char sendBuffer[MAX_MSG_PLUS_HANDLE];
 	char recvBuffer[MAX_MSG_PLUS_HANDLE];
@@ -305,7 +304,7 @@ int main(int argc, char *argv[]){
 		fflush(stdin);
 		goodHandle = GetHandle(userHandle);
 	}
-	printf("the user handle is: %s\n", userHandle);
+	//printf("the user handle is: %s\n", userHandle);
 
 	status = getaddrinfo(hostAddress, portNum, &hints, &servinfo);
 	if (status < 0){
@@ -322,18 +321,15 @@ int main(int argc, char *argv[]){
 	if (statusConnect < 0){
 		fprintf(stderr, "Error connecting to server.\n"); fflush(stdout); exit(1);
 	}
-	printf("prior to message acceptance, the goodMessage variable is: %d\n", goodMessage);
 	while (goodMessage == FALSE){
 		printf("%s> ", userHandle);
 		fflush(stdin);
 		goodMessage = GetMessage(sendBuffer, userHandle);
 	}	
-	printf("after message acceptance, the goodMessage variable is: %d\n", goodMessage);
 
 	goodMessage = FALSE;
-	printf("after goodMessage reset, the goodMessage variable is: %d\n", goodMessage);
 	
-	printf("the user message is: %s\n", sendBuffer);
+	//printf("the user message is: %s\n", sendBuffer);
 
 	SocketWrite(socketFD, sendBuffer);
 
@@ -345,14 +341,13 @@ int main(int argc, char *argv[]){
 	printf("%s\n", recvBuffer); fflush(stdout);
 	printf("about to close socket\n");
 	
-	if(strstr(sendBuffer, "\\quit") != NULL){
+	if(strstr(sendBuffer, "\\quit") == NULL){
 		memset(sendBuffer, '\0', sizeof(sendBuffer));
 		printf("you've entered the memset for the sendBuffer \\quit\n");
 	}
 	close(socketFD);
 	printf("is this thing still on?\n");
-	LIMITER++;
-	}while((strstr(sendBuffer, "\\quit") == NULL) && LIMITER < 10);
+	}while(strstr(sendBuffer, "\\quit") == NULL);
 	freeaddrinfo(servinfo);
 
     return 0;
