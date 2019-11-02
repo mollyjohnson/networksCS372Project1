@@ -312,43 +312,37 @@ int main(int argc, char *argv[]){
 	}	
 
 	do{
-	socketFD = socket(servinfo->ai_family, servinfo->ai_socktype, servinfo->ai_protocol);
-	if (socketFD < 0){
-		fprintf(stderr, "Error creating socket descriptor.\n"); fflush(stdout); exit(1);
-	}	
+		socketFD = socket(servinfo->ai_family, servinfo->ai_socktype, servinfo->ai_protocol);
+		if (socketFD < 0){
+			fprintf(stderr, "Error creating socket descriptor.\n"); fflush(stdout); exit(1);
+		}	
 
-	statusConnect = connect(socketFD, servinfo->ai_addr, servinfo->ai_addrlen);
-	if (statusConnect < 0){
-		fprintf(stderr, "Error connecting to server.\n"); fflush(stdout); exit(1);
-	}
-	while (goodMessage == FALSE){
-		printf("%s> ", userHandle);
-		fflush(stdin);
-		goodMessage = GetMessage(sendBuffer, userHandle);
-	}	
+		statusConnect = connect(socketFD, servinfo->ai_addr, servinfo->ai_addrlen);
+		if (statusConnect < 0){
+			fprintf(stderr, "Error connecting to server.\n"); fflush(stdout); exit(1);
+		}
+		while (goodMessage == FALSE){
+			printf("%s> ", userHandle);
+			fflush(stdin);
+			goodMessage = GetMessage(sendBuffer, userHandle);
+		}	
 
-	goodMessage = FALSE;
+		goodMessage = FALSE;
+		SocketWrite(socketFD, sendBuffer);
+
+		charsRead = recv(socketFD, recvBuffer, sizeof(recvBuffer) - 1, 0);
+		if (charsRead < 0){
+			fprintf(stderr, "Error reading from the socket.\n"); fflush(stdout); exit(1);
+		}
+		printf("%s\n", recvBuffer); fflush(stdout);
 	
-	//printf("the user message is: %s\n", sendBuffer);
+		if (strstr(sendBuffer, "\\quit") == NULL){
+			memset(sendBuffer, '\0', sizeof(sendBuffer));
+			memset(recvBuffer, '\0', sizeof(recvBuffer));
+		}
+		close(socketFD);
+	} while(strstr(sendBuffer, "\\quit") == NULL);
 
-	SocketWrite(socketFD, sendBuffer);
-
-	charsRead = recv(socketFD, recvBuffer, sizeof(recvBuffer) - 1, 0);
-	if (charsRead < 0){
-		fprintf(stderr, "Error reading from the socket.\n"); fflush(stdout); exit(1);
-	}
-
-	printf("%s\n", recvBuffer); fflush(stdout);
-	printf("about to close socket\n");
-	
-	if(strstr(sendBuffer, "\\quit") == NULL){
-		memset(sendBuffer, '\0', sizeof(sendBuffer));
-		printf("you've entered the memset for the sendBuffer \\quit\n");
-	}
-	close(socketFD);
-	printf("is this thing still on?\n");
-	}while(strstr(sendBuffer, "\\quit") == NULL);
 	freeaddrinfo(servinfo);
-
     return 0;
 }
