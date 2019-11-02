@@ -30,8 +30,14 @@ def ArgCheck():
 #post-conditions:
 #description:
 def GetMessage():
+	goodMessage = False
 	maxMessageSize = 501
-	message = input()
+
+	while(goodMessage == False):
+		message = input()
+		if(len(message) <= maxMessageSize):
+			goodMessage = True
+
 	return message
 
 #pre-conditions:
@@ -47,7 +53,6 @@ def main():
 	#converting a string to an int adapted from:
 	#https://www.digitalocean.com/community/tutorials/how-to-convert-data-types-in-python-3
 	serverPort = int(sys.argv[1]) 
-	print('server port entered is: ' + str(serverPort))
 	
 	#specify host address to a flip server
 	hostAddress = 'flip1.engr.oregonstate.edu'
@@ -56,11 +61,10 @@ def main():
 	serverSocket = socket(AF_INET, SOCK_STREAM)
 	serverSocket.bind((hostAddress, serverPort))
 	serverSocket.listen(1)
-	print('The server is ready to receive')
 
 	maxMsgPlusHandle = 514
-	serverHandle = "chloe_cat"
-	goodMessage = False
+	#serverHandle = "chloe_cat"
+	serverHandle = "server"
 
 	while True:
 		connectionSocket, addr = serverSocket.accept()
@@ -68,8 +72,6 @@ def main():
 		if "\\quit" in clientMessage:
 			print(clientMessage)
 			connectionSocket.close()
-			print('server port entered is: ' + str(serverPort))
-			print('The server is ready to receive')
 		else:
 			print(clientMessage)
 			print(serverHandle + '> ', end = '')

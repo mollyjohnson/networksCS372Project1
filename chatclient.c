@@ -220,7 +220,7 @@ int GetHandle(char *userHandleIn){
 	if(IsNewline(buffer) == FALSE){
 		if(strlen(buffer) > MAX_HANDLE_SIZE){
 			strcpy(userHandleIn, "Error");
-			printf("Error, your handle was too long. Please try again.\n");
+			printf("Error, your handle was too long. Please try again with 10 characters or less.\n");
 			goodInput = FALSE;
 		}
 		else{
@@ -300,7 +300,7 @@ int main(int argc, char *argv[]){
 	hints.ai_flags = AI_PASSIVE;
 
 	while (goodHandle == FALSE){
-		printf("Please enter your handle (one-word name up to 10 characters) and hit enter: ");
+		printf("What's your handle?: ");
 		fflush(stdin);
 		goodHandle = GetHandle(userHandle);
 	}
@@ -334,9 +334,9 @@ int main(int argc, char *argv[]){
 		if (charsRead < 0){
 			fprintf(stderr, "Error reading from the socket.\n"); fflush(stdout); exit(1);
 		}
-		printf("%s\n", recvBuffer); fflush(stdout);
 	
 		if (strstr(sendBuffer, "\\quit") == NULL){
+			printf("%s\n", recvBuffer); fflush(stdout);
 			memset(sendBuffer, '\0', sizeof(sendBuffer));
 			memset(recvBuffer, '\0', sizeof(recvBuffer));
 		}
