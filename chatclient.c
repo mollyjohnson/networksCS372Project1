@@ -306,12 +306,7 @@ int main(int argc, char *argv[]){
 	}
 	printf("the user handle is: %s\n", userHandle);
 
-	while (goodMessage == FALSE){
-		printf("Please enter your message (500 characters or less) and hit enter:\n");
-		fflush(stdin);
-		goodMessage = GetMessage(sendBuffer, userHandle);
-	}	
-	printf("the user message is: %s\n", sendBuffer);
+	
 
 	status = getaddrinfo(hostAddress, portNum, &hints, &servinfo);
 	if (status < 0){
@@ -327,6 +322,13 @@ int main(int argc, char *argv[]){
 	if (statusConnect < 0){
 		fprintf(stderr, "Error connecting to server.\n"); fflush(stdout); exit(1);
 	}
+	while (goodMessage == FALSE){
+		printf("%s> ", userHandle);
+		fflush(stdin);
+		goodMessage = GetMessage(sendBuffer, userHandle);
+	}	
+
+	printf("the user message is: %s\n", sendBuffer);
 
 	SocketWrite(socketFD, sendBuffer);
 
