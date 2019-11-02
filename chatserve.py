@@ -59,17 +59,23 @@ def main():
 	print('The server is ready to receive')
 
 	maxMsgPlusHandle = 514
-	serverHandle = "kermit"
+	serverHandle = "chloe_cat"
 	goodMessage = False
 
 	while True:
 		connectionSocket, addr = serverSocket.accept()
 		clientMessage = connectionSocket.recv(maxMsgPlusHandle).decode()
-		print(clientMessage)
-		print(serverHandle + '> ', end = '')
-		serverMessage = GetMessage()	
-		connectionSocket.send((serverHandle + '> ' + serverMessage).encode())
-		connectionSocket.close()
+		if "\\quit" in clientMessage:
+			print(clientMessage)
+			connectionSocket.close()
+			print('server port entered is: ' + str(serverPort))
+			print('The server is ready to receive')
+		else:
+			print(clientMessage)
+			print(serverHandle + '> ', end = '')
+			serverMessage = GetMessage()	
+			connectionSocket.send((serverHandle + '> ' + serverMessage).encode())
+			connectionSocket.close()
 
 #used to call the main function
 #using a main() function in python adapted from:
