@@ -26,12 +26,18 @@ def ArgCheck():
 	elif int(sys.argv[1]) > 65535:
 		print('You entered a port number above the valid port number range. Must enter a valid port number. Start the program again.')
 		exit()
+#pre-conditions:
+#post-conditions:
+#description:
+def GetMessage():
+	maxMessageSize = 501
+	message = input()
+	return message
 
 #pre-conditions:
 #post-conditions:
 #description:
 def main():
-	
 	#check user entered correct port number argument
 	ArgCheck()
 
@@ -52,15 +58,17 @@ def main():
 	serverSocket.listen(1)
 	print('The server is ready to receive')
 
-	maxMessageSize = 501
 	maxMsgPlusHandle = 514
 	serverHandle = "kermit"
+	goodMessage = False
 
 	while True:
 		connectionSocket, addr = serverSocket.accept()
 		clientMessage = connectionSocket.recv(maxMsgPlusHandle).decode()
-		print("the client message prior to sending is: " + clientMessage)
-		connectionSocket.send(clientMessage.encode())
+		print(clientMessage)
+		print(serverHandle + '> ', end = '')
+		serverMessage = GetMessage()	
+		connectionSocket.send((serverHandle + '> ' + serverMessage).encode())
 		connectionSocket.close()
 
 #used to call the main function
