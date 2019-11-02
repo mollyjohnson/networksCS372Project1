@@ -94,6 +94,74 @@ pre-conditions:
 post-conditions:
 description:
 */
+int GetMessage(char *userMessageIn, char *userHandleIn){
+	//create buffer of size MAX_CHARS (2048 as given in the assignment instructions plus one for null terminator)
+	char *buffer;
+	size_t bufsize = MAX_MSG_PLUS_HANDLE;
+	size_t characters;
+	int goodInput = TRUE;
+
+	//malloc the buffer and check that malloc is successful
+	buffer = (char *)malloc(bufsize * sizeof(char));
+
+	//if buffer == NULL, malloc had an error. print error message and exit with value of 1.
+	if(buffer == NULL){
+		perror("GETLINE BUFFER ERROR, UNABLE TO ALLOCATE\n");
+		exit(1);
+	}
+
+	//keep looping (by using while(1)) to get the line of user input. check for if getline returns -1
+	//is used to make sure getline doesn't encounter any problems due to signals
+	while(1){
+		//call getline to get user input from stdin and put it in the buffer
+		characters = getline(&buffer, &bufsize, stdin);
+
+		//check if getline returned -1
+		if(characters == -1){
+			//if getline returned -1, use clearerr on stdin and let it loop back around
+			clearerr(stdin);
+		}
+		else{
+			//else if getline was successful (didn't return -1), go ahead and break out of loop
+			break;
+		}
+	}
+
+	if(IsNewline(buffer) == FALSE){
+		if(strlen(buffer) > MAX_MESSAGE_SIZE){
+			strcpy(userMessageIn, "Error");
+			printf("Error, your message was too long. Please try again.\n");
+			goodInput = FALSE;
+		}
+		else{
+			//user entered a valid message, remove the newline char from the buffer, replacing it
+			//with a null terminating character
+			buffer[strcspn(buffer, "\n")] = '\0';
+
+			//cat the buffer with the newline char removed into the userHandle string variable
+			strcpy(userMessageIn, userHandleIn);
+			strcat(userMessageIn, "> ");
+			strcat(userMessageIn, buffer);
+		}
+	}
+	else{
+		strcpy(userMessageIn, "Error");
+		printf("Error, you didn't enter a message, you only hit enter. Please try again.\n");
+		goodInput = FALSE;
+	}
+	
+	//free the buffer that was malloc'd for getline and set to NULL
+	free(buffer);
+	buffer = NULL;
+
+	return goodInput;
+}
+
+/*
+pre-conditions:
+post-conditions:
+description:
+*/
 void ArgCheck(int argCount, char *args[]){
     if (argCount != 3){
         fprintf(stderr, "Wrong number of arguments! Must enter the correct hostname and a valid port number. Start the program again.\n");
@@ -215,6 +283,7 @@ int main(int argc, char *argv[]){
 	char const *portNum = argv[2];
 	char *hostAddress = argv[1];
 	int goodHandle = FALSE;
+	int goodMessage = FALSE;
 	char userHandle[MAX_HANDLE_SIZE];
 	char sendBuffer[MAX_MSG_PLUS_HANDLE];
 	char recvBuffer[MAX_MSG_PLUS_HANDLE];
@@ -232,9 +301,17 @@ int main(int argc, char *argv[]){
 
 	while (goodHandle == FALSE){
 		printf("Please enter your handle (one-word name up to 10 characters) and hit enter: ");
+		fflush(stdin);
 		goodHandle = GetHandle(userHandle);
 	}
 	printf("the user handle is: %s\n", userHandle);
+
+	while (goodMessage == FALSE){
+		printf("Please enter your message (500 characters or less) and hit enter:\n");
+		fflush(stdin);
+		goodMessage = GetMessage(sendBuffer, userHandle);
+	}	
+	printf("the user message is: %s\n", sendBuffer);
 
 	status = getaddrinfo(hostAddress, portNum, &hints, &servinfo);
 	if (status < 0){
@@ -251,8 +328,6 @@ int main(int argc, char *argv[]){
 		fprintf(stderr, "Error connecting to server.\n"); fflush(stdout); exit(1);
 	}
 
-	strcat(sendBuffer, "i love kermit");
-	printf("%s> ", userHandle);
 	SocketWrite(socketFD, sendBuffer);
 
 	charsRead = recv(socketFD, recvBuffer, sizeof(recvBuffer) - 1, 0);
