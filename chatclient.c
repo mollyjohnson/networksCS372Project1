@@ -252,6 +252,7 @@ int main(int argc, char *argv[]){
 	}
 
 	strcat(sendBuffer, "i love kermit");
+	printf("%s> ", userHandle);
 	SocketWrite(socketFD, sendBuffer);
 
 	charsRead = recv(socketFD, recvBuffer, sizeof(recvBuffer) - 1, 0);
