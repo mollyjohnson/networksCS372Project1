@@ -335,13 +335,16 @@ int main(int argc, char *argv[]){
 			fprintf(stderr, "Error reading from the socket.\n"); fflush(stdout); exit(1);
 		}
 	
-		if (strstr(sendBuffer, "\\quit") == NULL){
+		if ((strstr(sendBuffer, "\\quit") == NULL) && (strstr(recvBuffer, "\\quit") == NULL)){
 			printf("%s\n", recvBuffer); fflush(stdout);
 			memset(sendBuffer, '\0', sizeof(sendBuffer));
 			memset(recvBuffer, '\0', sizeof(recvBuffer));
 		}
+		if(strstr(recvBuffer, "\\quit") != NULL){
+			printf("%s\n", recvBuffer); fflush(stdout);
+		}
 		close(socketFD);
-	} while(strstr(sendBuffer, "\\quit") == NULL);
+	} while((strstr(sendBuffer, "\\quit") == NULL) && (strstr(recvBuffer, "\\quit") == NULL));
 
 	freeaddrinfo(servinfo);
     return 0;
