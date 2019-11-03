@@ -48,10 +48,11 @@ def ArgCheck():
 
 #pre-conditions: maxMessageSize must be known (in this case we know the max message size is 500 from the assignment instructions, and I
 #added one character for the null terminator). Although this parameter isn't passed in as an argument and can instead be defined in the
-#function, the max message size must be known ahead of time.
+#function, the max message size must be known ahead of time. serverHandle argument must be a valid string.
 #post-conditions: valid input will have been obtained from the user and this input message will be returned.
-#description: this function accepts no arguments and returns a string message that has been input by the user. Will check that this message
-#is valid and keep getting a 
+#description: this function accepts one argument and returns a string message that has been input by the user. Will check that this message
+#is valid and if not valid keep looping with an error message and request for new input from the user until a valid message of 500 chars
+#or less has been obtained. This message will then be returned.
 def GetMessage(serverHandle):
 	validMessage = False
 	maxMessageSize = 501
@@ -63,7 +64,6 @@ def GetMessage(serverHandle):
 		else:
 			print("Message too long. Try again.")
 			print(serverHandle + '> ', end = '')
-
 
 	return message
 
