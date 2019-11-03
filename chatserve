@@ -54,24 +54,36 @@ def ArgCheck():
 #is valid and if not valid keep looping with an error message and request for new input from the user until a valid message of 500 chars
 #or less has been obtained. This validated message will then be returned.
 def GetMessage(serverHandle):
+	#start validMessage bool to false
 	validMessage = False
+	#max client handle is 11 (10 + null term), max client message is 501 (500 + null term), added one for additional null term. so will always
+	#accommodate a message of up to 500 chars, as specified in the assignment instructions
 	maxMessageSize = 513
 
+	#continue to loop and get user input as long as the input is invalid (i.e. validMessage is false)
 	while(validMessage == False):
+		#get input from the user
 		message = input()
+		#if the message is below the max size, set validMessage bool to true so breaks out of loop since valid input has been received
 		if(len(message) <= maxMessageSize):
 			validMessage = True
+		#if the message is above the max message size, print an error message to user and reprint handle, so chatserve user can enter
+		#a new message
 		else:
 			print("Message too long. Try again.")
 			print(serverHandle + '> ', end = '')
 
+	#return validated message
 	return message
 
 #pre-conditions: none, this is the main function of the program
 #post-conditions: socket will have been set up, messages received and sent w a client when one connects, and after the connection has been closed
 #with that client via the "\quit" command, the server will remain waiting on the host and port number indicated, waiting for any additional client
-#connections, until a SIGING (ctrl-c) is received.
-#description:
+#connections, until a SIGINT (ctrl-c) is received.
+#description: the main function of the program. Calls other functions like ArgCheck() and GetMessage() (see those functions for details), sets the
+#server host address and server port (based on command line port argument), performs socket setup and accepts connections, receives/sends data
+#to/from the client, upon closing the client connection (\quit entered by either client or the server), will remain on the host and specified port
+#number, waiting for any additional client connection requests until a SIGINT (ctrl-c) is received, at which time the program will terminate.
 def main():
 	#check user entered correct port number argument
 	ArgCheck()
@@ -103,10 +115,11 @@ def main():
 	maxMsgPlusHandle = 513
 	serverHandle = "kermit"
 
-	#loop forever until you get a SIGINT (ctrl-c)
+	#loop until you get a SIGINT (ctrl-c)
 	while True:
-
+		#have server wait for requests
 		connectionSocket, addr = serverSocket.accept()
+
 		clientMessage = connectionSocket.recv(maxMsgPlusHandle).decode()
 		if "\\quit" in clientMessage:
 			print(clientMessage)

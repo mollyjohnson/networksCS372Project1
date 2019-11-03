@@ -26,7 +26,7 @@
 
 //macro definitions
 #define MAX_MESSAGE_SIZE 501
-#define MAX_MSG_PLUS_HANDLE 514
+#define MAX_MSG_PLUS_HANDLE 513
 #define HOST_ADDRESS "flip1.engr.oregonstate.edu"
 #define MAX_HANDLE_SIZE 11
 #define TRUE 1
