@@ -1,14 +1,33 @@
 #!/usr/bin/env python3
 
-#
+#although this file doesn't have the .py extension, it is written in python and the above shebang was included
+#to make sure it will be run using python3 on the flip server.
+
+#Programmer Name: Molly Johnson (johnsmol)
+#Program Name: ClientServerChat
+#Program Description: ClientServerChat is my program for completing the requirements of the cs372 Project 1
+#Assignment. This program works basically as a chat program between a server on one host (A) and a client on
+#another host (B). A connection will be established between host A and host B, and the client
+#and server can send messages back and forth to one another until the user (who is controlling
+#both the client and server) requests to quit the program, at which point the connection will be closed.
+#The server will then remain waiting on the port for any additional connections until a SIGINT is received.
+#The name of the server portion of the program is chatserve and the name of the client portion of the program
+#is chatclient. 
+#Course Name: CS 372 Intro to Networks
+#Last Modified: 11/03/19
 
 #imported libraries
 from socket import *
 import sys
 
-#pre-conditions:
-#post-conditions:
-#description:
+#pre-conditions: none
+#post-conditions: number of args will have been checked and the validity of the port argument will have been checked
+#description: this function accepts no arguments and returns nothing. Will first check if the correct number of arguments
+#has been entered (2, one for the program and one for the port number), then if the number of args is correct the port number
+#arg will be checked to make sure it's a non-negative integer, and then if it's a non-negative integer it will be checked to
+#make sure that it's not a number above the maximum valid port number possible. If any of these are true (wrong num of args
+#entered, negative integer or a string were entered as the port number, or a port number above the allowable range was entered),
+#the program will print an error message to the user and exit.
 def ArgCheck():
 	#should be 2 args, one for program name and one for port number
 	if len(sys.argv) != 2:
@@ -23,14 +42,17 @@ def ArgCheck():
 	#if a non-neg integer was entered, check it's in valid port num range. valid port number range: 0-65535
 	#valid port values excerpted from:
 	#https://www.webopedia.com/quick_ref/portnumbers.asp
-	elif int(sys.argv[1]) > 65535:
+	if int(sys.argv[1]) > 65535:
 		print('You entered a port number above the valid port number range. Must enter a valid port number. Start the program again.')
 		exit()
 
-#pre-conditions:
-#post-conditions:
-#description:
-def GetMessage():
+#pre-conditions: maxMessageSize must be known (in this case we know the max message size is 500 from the assignment instructions, and I
+#added one character for the null terminator). Although this parameter isn't passed in as an argument and can instead be defined in the
+#function, the max message size must be known ahead of time.
+#post-conditions: valid input will have been obtained from the user and this input message will be returned.
+#description: this function accepts no arguments and returns a string message that has been input by the user. Will check that this message
+#is valid and keep getting a 
+def GetMessage(serverHandle):
 	validMessage = False
 	maxMessageSize = 501
 
@@ -38,6 +60,10 @@ def GetMessage():
 		message = input()
 		if(len(message) <= maxMessageSize):
 			validMessage = True
+		else:
+			print("Message too long. Try again.")
+			print(serverHandle + '> ', end = '')
+
 
 	return message
 
@@ -75,7 +101,7 @@ def main():
 		else:
 			print(clientMessage)
 			print(serverHandle + '> ', end = '')
-			serverMessage = GetMessage()	
+			serverMessage = GetMessage(serverHandle)	
 			connectionSocket.send((serverHandle + '> ' + serverMessage).encode())
 			connectionSocket.close()
 
