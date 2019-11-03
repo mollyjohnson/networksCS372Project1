@@ -52,10 +52,10 @@ def ArgCheck():
 #post-conditions: valid input will have been obtained from the user and this input message will be returned.
 #description: this function accepts one argument and returns a string message that has been input by the user. Will check that this message
 #is valid and if not valid keep looping with an error message and request for new input from the user until a valid message of 500 chars
-#or less has been obtained. This message will then be returned.
+#or less has been obtained. This validated message will then be returned.
 def GetMessage(serverHandle):
 	validMessage = False
-	maxMessageSize = 501
+	maxMessageSize = 513
 
 	while(validMessage == False):
 		message = input()
@@ -67,8 +67,10 @@ def GetMessage(serverHandle):
 
 	return message
 
-#pre-conditions:
-#post-conditions:
+#pre-conditions: none, this is the main function of the program
+#post-conditions: socket will have been set up, messages received and sent w a client when one connects, and after the connection has been closed
+#with that client via the "\quit" command, the server will remain waiting on the host and port number indicated, waiting for any additional client
+#connections, until a SIGING (ctrl-c) is received.
 #description:
 def main():
 	#check user entered correct port number argument
@@ -81,18 +83,29 @@ def main():
 	#https://www.digitalocean.com/community/tutorials/how-to-convert-data-types-in-python-3
 	serverPort = int(sys.argv[1]) 
 	
-	#specify host address to a flip server
+	#specify host address to a flip server (since not specified in the command line per the assignment instructions and rubric, command line args
+	# should just be program name and port number for the server)
 	hostAddress = 'flip1.engr.oregonstate.edu'
 	
-	#basic socket server setup adapted from OSU CS 372 lecture 15 slides
+	#all socket server setup adapted from OSU CS 372 lecture 15 slides
+	#and p.205 from Computer Networking-A Top-Down Approach by Kurose and Ross, 7th ed
+	#create socket for server (SOCK_STREAM indicates this is a TCP connection)
 	serverSocket = socket(AF_INET, SOCK_STREAM)
+
+	#bind the socket to the specified host address and server port
 	serverSocket.bind((hostAddress, serverPort))
+
+	#have server start listening for TCP connection requests from clients
 	serverSocket.listen(1)
 
-	maxMsgPlusHandle = 514
+	#max message is 501 (500 + 1 for null term), max handle from client is 11 (10 + 1 for null term),
+	#gave one extra for handle plus message null term.
+	maxMsgPlusHandle = 513
 	serverHandle = "kermit"
 
+	#loop forever until you get a SIGINT (ctrl-c)
 	while True:
+
 		connectionSocket, addr = serverSocket.accept()
 		clientMessage = connectionSocket.recv(maxMsgPlusHandle).decode()
 		if "\\quit" in clientMessage:
