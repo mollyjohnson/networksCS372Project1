@@ -78,6 +78,26 @@ def GetMessage(serverHandle):
 	#return validated message
 	return message
 
+#/*
+#pre-conditions:
+#post-conditions:
+#description:
+#*/
+def SocketSetup(hostAddress, serverPort):
+	#all socket server setup adapted from OSU CS 372 lecture 15 slides (specifically, slide 9)
+	#and p.205 from Computer Networking-A Top-Down Approach by Kurose and Ross, 7th ed
+
+	#create socket for server (SOCK_STREAM indicates this is a TCP connection)
+	serverSocket = socket(AF_INET, SOCK_STREAM)
+
+	#bind the socket to the specified host address and server port
+	serverSocket.bind((hostAddress, serverPort))
+
+	#have server start listening for TCP connection requests from clients
+	serverSocket.listen(1)
+
+	return serverSocket
+
 #pre-conditions: none, this is the main function of the program
 #post-conditions: socket will have been set up, messages received and sent w a client when one connects, and after the connection has been closed
 #with that client via the "\quit" command, the server will remain waiting on the host and port number indicated, waiting for any additional client
@@ -101,17 +121,7 @@ def main():
 	# should just be program name and port number for the server)
 	hostAddress = 'flip1.engr.oregonstate.edu'
 	
-	#all socket server setup adapted from OSU CS 372 lecture 15 slides (specifically, slide 9)
-	#and p.205 from Computer Networking-A Top-Down Approach by Kurose and Ross, 7th ed
-
-	#create socket for server (SOCK_STREAM indicates this is a TCP connection)
-	serverSocket = socket(AF_INET, SOCK_STREAM)
-
-	#bind the socket to the specified host address and server port
-	serverSocket.bind((hostAddress, serverPort))
-
-	#have server start listening for TCP connection requests from clients
-	serverSocket.listen(1)
+	serverSocket = SocketSetup(hostAddress, serverPort)
 
 	#max message is 501 (500 + 1 for null term), max handle from client is 11 (10 + 1 for null term),
 	#gave one extra for handle plus message null term.
