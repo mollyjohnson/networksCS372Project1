@@ -56,6 +56,7 @@ def ArgCheck():
 def GetMessage(serverHandle):
 	#start validMessage bool to false
 	validMessage = False
+
 	#max client handle is 11 (10 + null term), max client message is 501 (500 + null term), added one for additional null term. so will always
 	#accommodate a message of up to 500 chars, as specified in the assignment instructions
 	maxMessageSize = 513
@@ -64,6 +65,7 @@ def GetMessage(serverHandle):
 	while(validMessage == False):
 		#get input from the user
 		message = input()
+
 		#if the message is below the max size, set validMessage bool to true so breaks out of loop since valid input has been received
 		if(len(message) <= maxMessageSize):
 			validMessage = True
@@ -99,8 +101,9 @@ def main():
 	# should just be program name and port number for the server)
 	hostAddress = 'flip1.engr.oregonstate.edu'
 	
-	#all socket server setup adapted from OSU CS 372 lecture 15 slides
+	#all socket server setup adapted from OSU CS 372 lecture 15 slides (specifically, slide 9)
 	#and p.205 from Computer Networking-A Top-Down Approach by Kurose and Ross, 7th ed
+
 	#create socket for server (SOCK_STREAM indicates this is a TCP connection)
 	serverSocket = socket(AF_INET, SOCK_STREAM)
 
@@ -113,22 +116,38 @@ def main():
 	#max message is 501 (500 + 1 for null term), max handle from client is 11 (10 + 1 for null term),
 	#gave one extra for handle plus message null term.
 	maxMsgPlusHandle = 513
+
+	#hard-coded server handle (okay per the assignment instructions)
 	serverHandle = "kermit"
 
-	#loop until you get a SIGINT (ctrl-c)
+	#continue looping until you get a SIGINT (ctrl-c)
 	while True:
 		#have server wait for requests
 		connectionSocket, addr = serverSocket.accept()
 
+		#receive the prepended handle + message from the client
 		clientMessage = connectionSocket.recv(maxMsgPlusHandle).decode()
+		#if the client has entered terminating string ("\quit"), print this
+		#message but don't send any message back, close the connection socket
 		if "\\quit" in clientMessage:
 			print(clientMessage)
 			connectionSocket.close()
+		#if the client didn't request to quit, print their handle + message,
+		#then print the server's handle and call GetMessage to get chatserve user input.
 		else:
 			print(clientMessage)
+
+			#using end='' to prevent the newline from being printed with the print() function adapted from:
+			#https://www.stechies.com/python-print-without-newline/
 			print(serverHandle + '> ', end = '')
+
+			#call GetMessage to get the user's input for message to send to client
 			serverMessage = GetMessage(serverHandle)	
+
+			#send the prepended chatserve handle plus the chatserve user's message to the client
 			connectionSocket.send((serverHandle + '> ' + serverMessage).encode())
+
+			#close the socket
 			connectionSocket.close()
 
 #used to call the main function
