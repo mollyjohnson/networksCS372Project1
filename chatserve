@@ -178,6 +178,9 @@ def main():
 			#call GetMessage to get the user's input for message to send to client
 			serverMessage = GetMessage(serverHandle)	
 
+			if (QuitCheck(serverMessage) == True):
+				print("the client is disconnecting.")
+
 			#send the prepended chatserve handle plus the chatserve user's message to the client
 			connectionSocket.send((serverHandle + '> ' + serverMessage).encode())
 

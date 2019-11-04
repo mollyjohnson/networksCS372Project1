@@ -31,6 +31,7 @@
 #define MAX_HANDLE_SIZE 11
 #define TRUE 1
 #define FALSE 0
+#define QUIT "\\quit" 
 
 /*
 pre-condititwo two valid c strings
@@ -337,17 +338,22 @@ int main(int argc, char *argv[]){
 		if (charsRead < 0){
 			fprintf(stderr, "Error reading from the socket.\n"); fflush(stdout); exit(1);
 		}
+
 	
-		if ((strstr(sendBuffer, "\\quit") == NULL) && (strstr(recvBuffer, "\\quit") == NULL)){
+		if ((strstr(sendBuffer, QUIT) == NULL) && (strstr(recvBuffer, QUIT) == NULL)){
 			printf("%s\n", recvBuffer); fflush(stdout);
 			memset(sendBuffer, '\0', sizeof(sendBuffer));
 			memset(recvBuffer, '\0', sizeof(recvBuffer));
 		}
-		if(strstr(recvBuffer, "\\quit") != NULL){
+		if (strstr(recvBuffer, QUIT) != NULL){
 			printf("%s\n", recvBuffer); fflush(stdout);
+			printf("the client is disconnecting.\n");
+		}
+		if (strstr(sendBuffer, QUIT) != NULL){
+			printf("the client is disconnecting.\n");
 		}
 		close(socketFD);
-	} while((strstr(sendBuffer, "\\quit") == NULL) && (strstr(recvBuffer, "\\quit") == NULL));
+	} while((strstr(sendBuffer, QUIT) == NULL) && (strstr(recvBuffer, QUIT) == NULL));
 
 	freeaddrinfo(servinfo);
     return 0;
