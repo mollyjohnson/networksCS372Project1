@@ -33,9 +33,12 @@
 #define FALSE 0
 
 /*
-pre-conditions:
-post-conditions:
-description:
+pre-condititwo two valid c strings
+post-conditions: a bool will be returned, true if the strings matched and false if the strings didn't match
+description: this function accepts two strings as arguments. It then uses strcmp to compare the strings
+and returns true if the strings matched, false if the strings didn't match. (I made this function because I could
+never remember if strcmp should return 0 for matching or not matching so felt this made it more explicit). This
+function is adapted from my own work created for OSU CS 344 Winter 2019 assignment 3, last updated 3-3-19.
 */
 int StringMatch(char *string1, char *string2){
 	//use strcmp to see if string one and two are equal. if equal, strcmp will return 0.
