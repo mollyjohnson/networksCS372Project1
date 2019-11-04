@@ -78,11 +78,9 @@ def GetMessage(serverHandle):
 	#return validated message
 	return message
 
-#/*
 #pre-conditions:
 #post-conditions:
 #description:
-#*/
 def SocketSetup(hostAddress, serverPort):
 	#all socket server setup adapted from OSU CS 372 lecture 15 slides (specifically, slide 9)
 	#and p.205 from Computer Networking-A Top-Down Approach by Kurose and Ross, 7th ed
@@ -97,6 +95,21 @@ def SocketSetup(hostAddress, serverPort):
 	serverSocket.listen(1)
 
 	return serverSocket
+
+#pre-conditions:
+#post-conditions:
+#description:
+def RecvMessage(serverSocket):
+	#max message is 501 (500 + 1 for null term), max handle from client is 11 (10 + 1 for null term),
+	#gave one extra for handle plus message null term.
+	maxMsgPlusHandle = 513
+
+	#have server wait for requests
+	connectionSocket, addr = serverSocket.accept()
+	#receive the prepended handle + message from the client
+	clientMessage = connectionSocket.recv(maxMsgPlusHandle).decode()
+
+	return connectionSocket, addr, clientMessage
 
 #pre-conditions: none, this is the main function of the program
 #post-conditions: socket will have been set up, messages received and sent w a client when one connects, and after the connection has been closed
@@ -123,20 +136,13 @@ def main():
 	
 	serverSocket = SocketSetup(hostAddress, serverPort)
 
-	#max message is 501 (500 + 1 for null term), max handle from client is 11 (10 + 1 for null term),
-	#gave one extra for handle plus message null term.
-	maxMsgPlusHandle = 513
-
 	#hard-coded server handle (okay per the assignment instructions)
 	serverHandle = "kermit"
 
 	#continue looping until you get a SIGINT (ctrl-c)
 	while True:
-		#have server wait for requests
-		connectionSocket, addr = serverSocket.accept()
+		connectionSocket, addr, clientMessage = RecvMessage(serverSocket)
 
-		#receive the prepended handle + message from the client
-		clientMessage = connectionSocket.recv(maxMsgPlusHandle).decode()
 		#if the client has entered terminating string ("\quit"), print this
 		#message but don't send any message back, close the connection socket
 		if "\\quit" in clientMessage:
