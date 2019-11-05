@@ -12,7 +12,7 @@
 #Course Name: CS 372 Intro to Networks
 #Last Modified: 11/04/19
 
-#imported libraries
+#imported libraries for socket (to create socket and use it) and sys (system, used to get input from the user)
 from socket import *
 import sys
 
@@ -70,13 +70,15 @@ def GetMessage(serverHandle, maxMsgPlusHandle):
 	#return validated message
 	return message
 
-#pre-conditions:
-#post-conditions:
-#description:
+#pre-conditions: valid host address and valid port number
+#post-conditions: socket will be created, bound, and listening, with the socket being returned
+#description: This function will accept two arguments, a valid host address (flip1 in this case)
+#and a valid port number. It will then use the SOCKET API to create a server socket (and SOCK_STREAM
+#to make this a TCP socket), bind that socket to the host and port, and begin listening for TCP
+#connection requests. It will then return the server socket.
 def SocketStartup(hostAddress, serverPort):
-	#all socket server setup adapted from OSU CS 372 lecture 15 slides (specifically, slide 9)
+	#socket server setup excerpted from OSU CS 372 lecture 15 slides (specifically, slide 9)
 	#and p.205 from Computer Networking-A Top-Down Approach by Kurose and Ross, 7th ed
-
 	#create socket for server (SOCK_STREAM indicates this is a TCP connection)
 	serverSocket = socket(AF_INET, SOCK_STREAM)
 
@@ -88,48 +90,80 @@ def SocketStartup(hostAddress, serverPort):
 
 	return serverSocket
 
-#pre-conditions:
-#post-conditions:
-#description:
+#pre-conditions: already created server socket, maximum message size + handle must be known
+#post-conditions: will return the connection socket, address, and message received from
+#the client.
+#description: This function will accept two arguments, a server socket and the max size
+#of the server handle plus the max size of the client message. Will use accept() to wait
+#for connection requests. Will then user recv() to get the bytes from the client over the
+#socket connection. Will use .decoe() to decode those bytes back into a string. Will then
+#return the connection socket and address returned from .accept() as well as the message
+#received from the client (their prepended handle plus message).
 def ReceiveMessage(serverSocket, maxMsgPlusHandle):
-	#have server wait for requests
 	#adapted from OSU CS 372 lecture 15 slides (specifically, slide 9)
 	#and p.205 from Computer Networking-A Top-Down Approach by Kurose and Ross, 7th ed
+	#have server wait for requests
 	connectionSocket, addr = serverSocket.accept()
 	#receive the prepended handle + message from the client
 	clientMessage = connectionSocket.recv(maxMsgPlusHandle).decode()
 
 	return connectionSocket, addr, clientMessage
 
-#pre-conditions:
-#post-conditions:
-#description:
+#pre-conditions: a valid string message and known phrase that will cause the program to quit
+#post-conditions: will determine if the message consists of user handle (client or server) +
+#"> " and the phrase that will cause the program to quit.
+#description: This function accepts two arguments, a string message and a "quit" phrase. It will
+#loop through the number of chars in the quit phrase backward until the beginning of the quit phrase,
+#and compare each char in the message to that of the quit phrase, space, and arrow that comes after
+#the client's or server's handle. In this way, the "\quit" message will only be taken as a command
+#to quit the client connection when entered as "\quit" alone by the user, and not part of a longer
+#message, like "when you want to quit just type \quit". Will then compare the number of matches of
+#those characters to the number of chars in the quit phrase. If they're equal the message was just "\quit".
+#If not, the client or server message was not "\quit". If the message from the client or server was
+#"\quit", will return true. If not, will return false. 
 def QuitCheck(message, quitPhrase):
+	#use > \quit as phrase plus delimiter
 	quitPhrasePlusDelimiter = ("> " + quitPhrase)
+	#start isQuit to false
 	isQuit = False
+	#start quitcount at 0 so can be incremented
 	quitCount = 0
+	#have k be last index in message string
 	k = (len(message) - 1) 
+	#have j be last index in quitphrase string
 	j = (len(quitPhrasePlusDelimiter) - 1)
+	#start loop counter at 0
 	loopCount = 0
+	#have the number of chars needed for a quit phrase match to be the length of the quit phrase + delimiter
 	phraseMatchCount = len(quitPhrasePlusDelimiter)	
 
+	#if the message isn't as long as the quit phrase, don't check it as the user can't have entered \quit
+	#and this would cause a crash by trying to compare index values not there.
 	if(len(message) >= phraseMatchCount):
+		#loop for the length of the quit phrase
 		while (loopCount < phraseMatchCount):
+			#compare each char in quit phrase + delimiter to that of the same index in the message
 			if(message[k] == quitPhrasePlusDelimiter[j]):
+				#if they matched, increment quit count
 				quitCount = quitCount + 1
 
+			#eecrement the indexes and increment the loop counter
 			k = k - 1
 			j = j - 1
 			loopCount = loopCount + 1
 
+	#if the number of matching chars from the message is equal to the length of the quitphrase, the user entered
+	#"\quit", set isQuit to true. Otherwise let it stay false
 	if(quitCount == phraseMatchCount):
 		isQuit = True
 
 	return isQuit
 
-#pre-conditions:
-#post-conditions:
-#description:
+#pre-conditions: valid server handle, valid server message, valid connection socket
+#post-conditions: will send the server's handle, "> ", and actual message to the client
+#description: Will accept three arguments, handle, message, and connection socket. Will use
+#the SOCKET .send() function to send this message to the client and .encode() to turn the
+#string into bytes.
 def SendMessage(serverHandle, serverMessage, connectionSocket):
 	#adapted from OSU CS 372 lecture 15 slides (specifically, slide 9)
 	#and p.205 from Computer Networking-A Top-Down Approach by Kurose and Ross, 7th ed
@@ -139,10 +173,8 @@ def SendMessage(serverHandle, serverMessage, connectionSocket):
 #post-conditions: socket will have been set up, messages received and sent w a client when one connects, and after the connection has been closed
 #with that client via the "\quit" command, the server will remain waiting on the host and port number indicated, waiting for any additional client
 #connections, until a SIGINT (ctrl-c) is received.
-#description: the main function of the program. Calls other functions like ArgCheck() and GetMessage() (see those functions for details), sets the
-#server host address and server port (based on command line port argument), performs socket setup and accepts connections, receives/sends data
-#to/from the client, upon closing the client connection (\quit entered by either client or the server), will remain on the host and specified port
-#number, waiting for any additional client connection requests until a SIGINT (ctrl-c) is received, at which time the program will terminate.
+#description: the main function of the program. Calls other functions to perform actions like getting user input, creating the socket, sending
+#and receiving data with the client, etc. See each functions for details. will close connection when user enters \quit and terminate when receives a SIGINT.
 def main():
 	#check user entered correct port number argument
 	ArgCheck()
@@ -161,17 +193,22 @@ def main():
 	#hard-coded server handle (okay per the assignment instructions)
 	serverHandle = "kermit"
 
+	#phrase used to indicate you want to quit the program
 	quitPhrase = "\\quit"
 
 	#max message is 501 (500 + 1 for null term), max handle from client is 11 (10 + 1 for null term),
 	#gave one extra for handle plus message null term.
 	maxMsgPlusHandle = 513
 	
+	#perform socket startup
 	serverSocket = SocketStartup(hostAddress, serverPort)
 
 	#continue looping until you get a SIGINT (ctrl-c)
 	while True:
+		#receive message from client
 		connectionSocket, addr, clientMessage = ReceiveMessage(serverSocket, maxMsgPlusHandle)
+
+		#check if the client entered "\quit"
 		if (QuitCheck(clientMessage, quitPhrase) == True):
 			print(clientMessage)
 			print("the client is disconnecting.")
@@ -193,6 +230,7 @@ def main():
 			#call GetMessage to get the user's input for message to send to client
 			serverMessage = GetMessage(serverHandle, maxMsgPlusHandle)	
 
+			#check if the server user entered "\quit"
 			if (QuitCheck((serverHandle + "> " + serverMessage), quitPhrase) == True):
 				print("the client is disconnecting.")
 

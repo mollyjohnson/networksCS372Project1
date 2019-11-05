@@ -28,14 +28,14 @@ now be prompted to enter your desired user handle (the handle for the server has
 option in the assignment instructions). Enter your client user handle and press enter. The chatclient program should then show your
 handle and an arrow, a space, and then wait for your input. So it would look something like "[chatclientHandle]> ". Enter your first
 message in the chatclient window here that you want to send to the server and press enter. This will establish the connection between
-chatserve and chatclient. Now go to the chatserve window (flip1). You should see the prepended handle and the user's message printed
-there, and underneath it you should see the hard-coded chatserve handle, an arrow, and a space, with the chatserve program now waiting
+chatserve and chatclient. Now go to the chatserve window (flip1). You should see the prepended handle and the client's message printed
+there, and on the next line you should see the hard-coded chatserve handle, an arrow, and a space, with the chatserve program now waiting
 for your input. Enter the message you want to send back to the client from the server and press enter. Now go back to the chatclient window
 (flip2 or flip3 whichever you chose). There, you should see the message sent by the server printed along with their prepended user handle,
 and chatclient will be again waiting for your input to send to the server. You can continue sending messages back and forth in this way
 in an alternating fashion, chatclient-chatserve-chatclient-chatserve-chatclient-chatserve for as long as you wish. Once you're done
 messaging and are ready to close the connection between this client and the server, just type "\quit" (minus the quotes) as your message
-on EITHER the chatserve or chatclient windows. \quit will end the client connection regardless of whether you enter this \quit message
+on either the chatserve or chatclient windows. \quit will end the client connection regardless of whether you enter this \quit message
 in the chatserve or chatclient windows. At that point, the connection with that chatclient and the chatserve will close, and the chatclient
 program will end. The chatserve program, however, will continue running and waiting on its host and portnumber specified, waiting for
 additional connections. If you want to establish another connection, repeat the execution of the chatclient program, using 
