@@ -320,12 +320,36 @@ description:
 */
 int QuitCheck(char *message){
 
+	/*
 	if(strstr(message, QUIT) == NULL){
 		return FALSE;
 	}
 	else{
 		return TRUE;
 	}
+	*/
+
+	int isQuit = FALSE;
+	int quitCount = 0;
+	int k = (strlen(message) - 1);
+	int j = (strlen(QUIT_PLUS_DELIMITER) - 1);
+	int loopCount = 0;
+	int phraseMatchCount = strlen(QUIT_PLUS_DELIMITER);
+
+	if(strlen(message) >= phraseMatchCount){
+		while(loopCount < phraseMatchCount){
+			if(message[k] == QUIT_PLUS_DELIMITER[j]){
+				quitCount++;
+			}
+			k--;
+			j--;
+			loopCount++;
+		}
+	}
+	if(quitCount == phraseMatchCount){
+		isQuit = TRUE;
+	}
+	return isQuit;
 }
 
 /*
