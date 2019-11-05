@@ -1,13 +1,7 @@
 #Programmer Name: Molly Johnson (johnsmol)
-#Program Name: ClientServerChat
-#Program Description: ClientServerChat is my program for completing the requirements of the cs372 Project 1
-#Assignment. This program works basically as a chat program between a server on one host (A) and a client on
-#another host (B). A connection will be established between host A and host B, and the client
-#and server can send messages back and forth to one another until the user (who is controlling
-#both the client and server) requests to quit the program, at which point the connection will be closed.
-#The server will then remain waiting on the port for any additional connections until a SIGINT is received.
-#The name of the server portion of the program is chatserve and the name of the client portion of the program
-#is chatclient. 
+#Program Name: makefile 
+#Program Description: makefile that will compile the .c file into an executable and
+#add executable permissions to the python file
 #Course Name: CS 372 Intro to Networks
 #Last Modified: 11/04/19
 
