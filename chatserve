@@ -167,7 +167,7 @@ def main():
 			print("the client is disconnecting.")
 			
 			#close the socket
-			#adapted from OSU CS 372 lecture 15 slides (specifically, slide 9)
+			#excerpted from OSU CS 372 lecture 15 slides (specifically, slide 9)
 			#and p.205 from Computer Networking-A Top-Down Approach by Kurose and Ross, 7th ed
 			connectionSocket.close()
 
@@ -190,13 +190,13 @@ def main():
 			SendMessage(serverHandle, serverMessage, connectionSocket)
 
 			#close the socket
-			#adapted from OSU CS 372 lecture 15 slides (specifically, slide 9)
+			#excerpted from OSU CS 372 lecture 15 slides (specifically, slide 9)
 			#and p.205 from Computer Networking-A Top-Down Approach by Kurose and Ross, 7th ed
 			connectionSocket.close()
 
 
 #used to call the main function
-#using a main() function in python adapted from:
+#using a main() function in python excerpted from:
 #https://www.journaldev.com/17752/python-main-function
 if __name__ == '__main__':	
 	main()
