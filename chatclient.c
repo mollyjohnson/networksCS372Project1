@@ -303,6 +303,24 @@ pre-conditions:
 post-conditions:
 description:
 */
+int InitiateContact(struct addrinfo *servinfo){
+	int sockFD = socket(servinfo->ai_family, servinfo->ai_socktype, servinfo->ai_protocol);
+	if (sockFD < 0){
+		fprintf(stderr, "Error creating socket descriptor.\n"); fflush(stdout); exit(1);
+	}	
+
+	int statusConnect = connect(sockFD, servinfo->ai_addr, servinfo->ai_addrlen);
+	if (statusConnect < 0){
+		fprintf(stderr, "Error connecting to server.\n"); fflush(stdout); exit(1);
+	}
+	return sockFD;
+}
+
+/*
+pre-conditions:
+post-conditions:
+description:
+*/
 int main(int argc, char *argv[]){
     ArgCheck(argc, argv);
 		
@@ -319,7 +337,7 @@ int main(int argc, char *argv[]){
 	memset(sendBuffer, '\0', sizeof(sendBuffer));
 	memset(recvBuffer, '\0', sizeof(recvBuffer));
 
-	int status, socketFD, statusConnect;
+	int status, socketFD;
 	struct addrinfo hints;
 	struct addrinfo *servinfo;
 	memset(&hints, 0, sizeof(hints));
@@ -332,7 +350,6 @@ int main(int argc, char *argv[]){
 		fflush(stdin);
 		goodHandle = GetHandle(userHandle);
 	}
-	//printf("the user handle is: %s\n", userHandle);
 
 	status = getaddrinfo(hostAddress, portNum, &hints, &servinfo);
 	if (status < 0){
@@ -340,15 +357,8 @@ int main(int argc, char *argv[]){
 	}	
 
 	do{
-		socketFD = socket(servinfo->ai_family, servinfo->ai_socktype, servinfo->ai_protocol);
-		if (socketFD < 0){
-			fprintf(stderr, "Error creating socket descriptor.\n"); fflush(stdout); exit(1);
-		}	
-
-		statusConnect = connect(socketFD, servinfo->ai_addr, servinfo->ai_addrlen);
-		if (statusConnect < 0){
-			fprintf(stderr, "Error connecting to server.\n"); fflush(stdout); exit(1);
-		}
+		socketFD = InitiateContact(servinfo);
+		
 		while (goodMessage == FALSE){
 			printf("%s> ", userHandle);
 			fflush(stdin);
