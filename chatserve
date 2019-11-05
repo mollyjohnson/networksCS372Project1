@@ -53,13 +53,9 @@ def ArgCheck():
 #description: this function accepts one argument and returns a string message that has been input by the user. Will check that this message
 #is valid and if not valid keep looping with an error message and request for new input from the user until a valid message of 500 chars
 #or less has been obtained. This validated message will then be returned.
-def GetMessage(serverHandle):
+def GetMessage(serverHandle, maxMsgPlusHandle):
 	#start validMessage bool to false
 	validMessage = False
-
-	#max client handle is 11 (10 + null term), max client message is 501 (500 + null term), added one for additional null term. so will always
-	#accommodate a message of up to 500 chars, as specified in the assignment instructions
-	maxMessageSize = 513
 
 	#continue to loop and get user input as long as the input is invalid (i.e. validMessage is false)
 	while(validMessage == False):
@@ -67,7 +63,7 @@ def GetMessage(serverHandle):
 		message = input()
 
 		#if the message is below the max size, set validMessage bool to true so breaks out of loop since valid input has been received
-		if(len(message) <= maxMessageSize):
+		if(len(message) <= maxMsgPlusHandle):
 			validMessage = True
 		#if the message is above the max message size, print an error message to user and reprint handle, so chatserve user can enter
 		#a new message
@@ -99,11 +95,7 @@ def SocketStartup(hostAddress, serverPort):
 #pre-conditions:
 #post-conditions:
 #description:
-def ReceiveMessage(serverSocket):
-	#max message is 501 (500 + 1 for null term), max handle from client is 11 (10 + 1 for null term),
-	#gave one extra for handle plus message null term.
-	maxMsgPlusHandle = 513
-
+def ReceiveMessage(serverSocket, maxMsgPlusHandle):
 	#have server wait for requests
 	connectionSocket, addr = serverSocket.accept()
 	#receive the prepended handle + message from the client
@@ -114,11 +106,11 @@ def ReceiveMessage(serverSocket):
 #pre-conditions:
 #post-conditions:
 #description:
-def QuitCheck(clientMessage):
+def QuitCheck(clientMessage, quitPhrase):
 	isQuit = False
 	#if the client has entered terminating string ("\quit"), print this
 	#message but don't send any message back, close the connection socket
-	if "\\quit" in clientMessage:
+	if quitPhrase in clientMessage:
 		isQuit = True
 
 	return isQuit
@@ -152,16 +144,23 @@ def main():
 	#specify host address to a flip server (since not specified in the command line per the assignment instructions and rubric, command line args
 	# should just be program name and port number for the server)
 	hostAddress = 'flip1.engr.oregonstate.edu'
-	
-	serverSocket = SocketStartup(hostAddress, serverPort)
 
 	#hard-coded server handle (okay per the assignment instructions)
 	serverHandle = "kermit"
 
+	quitPhrase = "\\quit"
+
+	#max message is 501 (500 + 1 for null term), max handle from client is 11 (10 + 1 for null term),
+	#gave one extra for handle plus message null term.
+	maxMsgPlusHandle = 513
+	
+	serverSocket = SocketStartup(hostAddress, serverPort)
+
+
 	#continue looping until you get a SIGINT (ctrl-c)
 	while True:
-		connectionSocket, addr, clientMessage = ReceiveMessage(serverSocket)
-		if (QuitCheck(clientMessage) == True):
+		connectionSocket, addr, clientMessage = ReceiveMessage(serverSocket, maxMsgPlusHandle)
+		if (QuitCheck(clientMessage, quitPhrase) == True):
 			print(clientMessage)
 			print("the client is disconnecting.")
 			CloseSocket(connectionSocket)
@@ -176,9 +175,9 @@ def main():
 			print(serverHandle + '> ', end = '')
 
 			#call GetMessage to get the user's input for message to send to client
-			serverMessage = GetMessage(serverHandle)	
+			serverMessage = GetMessage(serverHandle, maxMsgPlusHandle)	
 
-			if (QuitCheck(serverMessage) == True):
+			if (QuitCheck(serverMessage, quitPhrase) == True):
 				print("the client is disconnecting.")
 
 			#send the prepended chatserve handle plus the chatserve user's message to the client
