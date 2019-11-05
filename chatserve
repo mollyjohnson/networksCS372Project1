@@ -108,11 +108,30 @@ def ReceiveMessage(serverSocket, maxMsgPlusHandle):
 #pre-conditions:
 #post-conditions:
 #description:
-def QuitCheck(clientMessage, quitPhrase):
-	isQuit = False
+def QuitCheck(message, quitPhrase):
+	#isQuit = False
 	#if the client has entered terminating string ("\quit"), print this
 	#message but don't send any message back, close the connection socket
-	if quitPhrase in clientMessage:
+	#if quitPhrase in clientMessage:
+	#	isQuit = True
+	quitPhrasePlusDelimiter = ("> " + quitPhrase)
+	isQuit = False
+	quitCount = 0
+	k = (len(message) - 1) 
+	j = (len(quitPhrasePlusDelimiter) - 1)
+	loopCount = 0
+	phraseMatchCount = len(quitPhrasePlusDelimiter)	
+
+	if(len(message) >= phraseMatchCount):
+		while (loopCount < phraseMatchCount):
+			if(message[k] == quitPhrasePlusDelimiter[j]):
+				quitCount = quitCount + 1
+
+			k = k - 1
+			j = j - 1
+			loopCount = loopCount + 1
+
+	if(quitCount == phraseMatchCount):
 		isQuit = True
 
 	return isQuit
@@ -183,7 +202,9 @@ def main():
 			#call GetMessage to get the user's input for message to send to client
 			serverMessage = GetMessage(serverHandle, maxMsgPlusHandle)	
 
-			if (QuitCheck(serverMessage, quitPhrase) == True):
+			print("server message is: " + serverMessage)
+
+			if (QuitCheck((serverHandle + "> " + serverMessage), quitPhrase) == True):
 				print("the client is disconnecting.")
 
 			#send the prepended chatserve handle plus the chatserve user's message to the client
