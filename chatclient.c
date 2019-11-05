@@ -254,7 +254,7 @@ pre-conditions:
 post-conditions:
 description:
 */
-void SocketWrite(int sockFD, char *sendBuf){
+void SendMessage(int sockFD, char *sendBuf){
 	int charsW;
 	charsW = send(sockFD, sendBuf, strlen(sendBuf), 0);
 	if (charsW < 0){
@@ -332,7 +332,7 @@ int main(int argc, char *argv[]){
 		}	
 
 		goodMessage = FALSE;
-		SocketWrite(socketFD, sendBuffer);
+		SendMessage(socketFD, sendBuffer);
 
 		charsRead = recv(socketFD, recvBuffer, sizeof(recvBuffer) - 1, 0);
 		if (charsRead < 0){
