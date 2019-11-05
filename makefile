@@ -9,7 +9,7 @@
 #The name of the server portion of the program is chatserve and the name of the client portion of the program
 #is chatclient. 
 #Course Name: CS 372 Intro to Networks
-#Last Modified: 11/03/19
+#Last Modified: 11/04/19
 
 #makefile adapted from  my own work during OSU CS 344 Winter 2019, last updated 3/3/19.
 #make all be the default target, with the dependency of ChatApp

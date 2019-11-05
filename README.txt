@@ -9,7 +9,7 @@ The server will then remain waiting on the port for any additional connections u
 The name of the server portion of the program is chatserve and the name of the client portion of the program
 is chatclient. 
 Course Name: CS 372 Intro to Networks
-Last Modified: 11/03/19
+Last Modified: 11/04/19
 
 Instructions for how to compile, execute, and control the program:
 Log onto the Oregon State flip1 server terminal (flip1.engr.oregonstate.edu) using an SSH client like Putty.

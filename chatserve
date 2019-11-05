@@ -14,7 +14,7 @@
 #The name of the server portion of the program is chatserve and the name of the client portion of the program
 #is chatclient. 
 #Course Name: CS 372 Intro to Networks
-#Last Modified: 11/03/19
+#Last Modified: 11/04/19
 
 #imported libraries
 from socket import *
@@ -125,14 +125,6 @@ def SendMessage(serverHandle, serverMessage, connectionSocket):
 	#and p.205 from Computer Networking-A Top-Down Approach by Kurose and Ross, 7th ed
 	connectionSocket.send((serverHandle + '> ' + serverMessage).encode())
 
-#pre-conditions:
-#post-conditions:
-#description:
-def CloseSocket(connectionSocket):
-	#adapted from OSU CS 372 lecture 15 slides (specifically, slide 9)
-	#and p.205 from Computer Networking-A Top-Down Approach by Kurose and Ross, 7th ed
-	connectionSocket.close()
-
 #pre-conditions: none, this is the main function of the program
 #post-conditions: socket will have been set up, messages received and sent w a client when one connects, and after the connection has been closed
 #with that client via the "\quit" command, the server will remain waiting on the host and port number indicated, waiting for any additional client
@@ -173,7 +165,11 @@ def main():
 		if (QuitCheck(clientMessage, quitPhrase) == True):
 			print(clientMessage)
 			print("the client is disconnecting.")
-			CloseSocket(connectionSocket)
+			
+			#close the socket
+			#adapted from OSU CS 372 lecture 15 slides (specifically, slide 9)
+			#and p.205 from Computer Networking-A Top-Down Approach by Kurose and Ross, 7th ed
+			connectionSocket.close()
 
 		#if the client didn't request to quit, print their handle + message,
 		#then print the server's handle and call GetMessage to get chatserve user input.
@@ -194,7 +190,9 @@ def main():
 			SendMessage(serverHandle, serverMessage, connectionSocket)
 
 			#close the socket
-			CloseSocket(connectionSocket)
+			#adapted from OSU CS 372 lecture 15 slides (specifically, slide 9)
+			#and p.205 from Computer Networking-A Top-Down Approach by Kurose and Ross, 7th ed
+			connectionSocket.close()
 
 
 #used to call the main function
