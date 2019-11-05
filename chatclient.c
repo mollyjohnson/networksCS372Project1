@@ -160,12 +160,6 @@ int GetMessage(char *userMessageIn, char *userHandleIn){
 		}
 	}
 	else{
-		/*
-		strcpy(userMessageIn, "Error");
-		printf("Error, you didn't enter a message, you only hit enter. Please try again.\n");
-		goodInput = FALSE;
-		*/
-		//memset(userMessageIn, '\0', sizeof(userMessageIn));
 		strcpy(userMessageIn, userHandleIn);
 		strcat(userMessageIn, "> ");
 		goodInput = TRUE;
