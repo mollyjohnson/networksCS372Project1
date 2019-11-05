@@ -97,6 +97,8 @@ def SocketStartup(hostAddress, serverPort):
 #description:
 def ReceiveMessage(serverSocket, maxMsgPlusHandle):
 	#have server wait for requests
+	#adapted from OSU CS 372 lecture 15 slides (specifically, slide 9)
+	#and p.205 from Computer Networking-A Top-Down Approach by Kurose and Ross, 7th ed
 	connectionSocket, addr = serverSocket.accept()
 	#receive the prepended handle + message from the client
 	clientMessage = connectionSocket.recv(maxMsgPlusHandle).decode()
@@ -115,11 +117,20 @@ def QuitCheck(clientMessage, quitPhrase):
 
 	return isQuit
 
+#pre-conditions:
+#post-conditions:
+#description:
+def SendMessage(serverHandle, serverMessage, connectionSocket):
+	#adapted from OSU CS 372 lecture 15 slides (specifically, slide 9)
+	#and p.205 from Computer Networking-A Top-Down Approach by Kurose and Ross, 7th ed
+	connectionSocket.send((serverHandle + '> ' + serverMessage).encode())
 
 #pre-conditions:
 #post-conditions:
 #description:
 def CloseSocket(connectionSocket):
+	#adapted from OSU CS 372 lecture 15 slides (specifically, slide 9)
+	#and p.205 from Computer Networking-A Top-Down Approach by Kurose and Ross, 7th ed
 	connectionSocket.close()
 
 #pre-conditions: none, this is the main function of the program
@@ -156,7 +167,6 @@ def main():
 	
 	serverSocket = SocketStartup(hostAddress, serverPort)
 
-
 	#continue looping until you get a SIGINT (ctrl-c)
 	while True:
 		connectionSocket, addr, clientMessage = ReceiveMessage(serverSocket, maxMsgPlusHandle)
@@ -181,10 +191,11 @@ def main():
 				print("the client is disconnecting.")
 
 			#send the prepended chatserve handle plus the chatserve user's message to the client
-			connectionSocket.send((serverHandle + '> ' + serverMessage).encode())
+			SendMessage(serverHandle, serverMessage, connectionSocket)
 
 			#close the socket
-			connectionSocket.close()
+			CloseSocket(connectionSocket)
+
 
 #used to call the main function
 #using a main() function in python adapted from:
