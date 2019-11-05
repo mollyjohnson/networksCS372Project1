@@ -318,6 +318,21 @@ pre-conditions:
 post-conditions:
 description:
 */
+int QuitCheck(char *message){
+
+	if(strstr(message, QUIT) == NULL){
+		return FALSE;
+	}
+	else{
+		return TRUE;
+	}
+}
+
+/*
+pre-conditions:
+post-conditions:
+description:
+*/
 int main(int argc, char *argv[]){
     ArgCheck(argc, argv);
 		
@@ -367,20 +382,20 @@ int main(int argc, char *argv[]){
 
 		ReceiveMessage(socketFD, recvBuffer);
 		
-		if ((strstr(sendBuffer, QUIT) == NULL) && (strstr(recvBuffer, QUIT) == NULL)){
+		if ((QuitCheck(sendBuffer) == FALSE) && (QuitCheck(recvBuffer) == FALSE)){
 			printf("%s\n", recvBuffer); fflush(stdout);
 			memset(sendBuffer, '\0', sizeof(sendBuffer));
 			memset(recvBuffer, '\0', sizeof(recvBuffer));
 		}
-		if (strstr(recvBuffer, QUIT) != NULL){
+		if (QuitCheck(recvBuffer) == TRUE){
 			printf("%s\n", recvBuffer); fflush(stdout);
 			printf("the client is disconnecting.\n");
 		}
-		if (strstr(sendBuffer, QUIT) != NULL){
+		if (QuitCheck(sendBuffer) == TRUE){
 			printf("the client is disconnecting.\n");
 		}
 		close(socketFD);
-	} while((strstr(sendBuffer, QUIT) == NULL) && (strstr(recvBuffer, QUIT) == NULL));
+	} while((QuitCheck(sendBuffer) == FALSE) && (QuitCheck(recvBuffer) == FALSE));
 
 	freeaddrinfo(servinfo);
     return 0;
