@@ -290,6 +290,19 @@ pre-conditions:
 post-conditions:
 description:
 */
+void ReceiveMessage(int sockFD, char *recvBuf){
+	int charsR;
+	charsR = recv(sockFD, recvBuf, (MAX_MSG_PLUS_HANDLE - 1), 0);
+	if (charsR < 0){
+		fprintf(stderr, "Error reading from the socket.\n"); fflush(stdout); exit(1);
+	}
+}
+
+/*
+pre-conditions:
+post-conditions:
+description:
+*/
 int main(int argc, char *argv[]){
     ArgCheck(argc, argv);
 		
@@ -306,7 +319,7 @@ int main(int argc, char *argv[]){
 	memset(sendBuffer, '\0', sizeof(sendBuffer));
 	memset(recvBuffer, '\0', sizeof(recvBuffer));
 
-	int status, socketFD, statusConnect, charsRead;
+	int status, socketFD, statusConnect;
 	struct addrinfo hints;
 	struct addrinfo *servinfo;
 	memset(&hints, 0, sizeof(hints));
@@ -345,11 +358,8 @@ int main(int argc, char *argv[]){
 		goodMessage = FALSE;
 		SendMessage(socketFD, sendBuffer);
 
-		charsRead = recv(socketFD, recvBuffer, sizeof(recvBuffer) - 1, 0);
-		if (charsRead < 0){
-			fprintf(stderr, "Error reading from the socket.\n"); fflush(stdout); exit(1);
-		}
-	
+		ReceiveMessage(socketFD, recvBuffer);
+		
 		if ((strstr(sendBuffer, QUIT) == NULL) && (strstr(recvBuffer, QUIT) == NULL)){
 			printf("%s\n", recvBuffer); fflush(stdout);
 			memset(sendBuffer, '\0', sizeof(sendBuffer));
