@@ -50,88 +50,52 @@ to terminate the chatserve program as well, just give it a SIGINT signal (press 
 -----------------------------------------------------------------------------------------------------------------------------------
 
 CS 372 Introduction to Computer Networks
-Programming Assignment #2
-Due Sunday, end of Week 9, by 11:59pm
+Programming Assignment #1
+Due Sunday, end of Week 5, by 11:59pm
 Submit the source files, Makefile, and README in a .zip file to Canvas.
 Objectives:
-1. Implement 2-connection client-server network application
-2. Practice using the sockets API
-3. Refresh programming skills
+1. Implement a client-server network application
+2. Learn to use the sockets API
+3. Use the TCP protocol
+4. Refresh programming skills
 The Program:
-Design and implement a simple file transfer system, i.e., create a file transfer server and a file transfer client. Write the ftserver and the ftclient programs. The final version of your programs must accomplish the following tasks:
-1. ftserver starts on Host A, and validates command-line parameters (<SERVER_PORT>).
-2. ftserver waits on <PORTNUM> for a client request.
-3. ftclient starts on Host B, and validates any pertinent command-line parameters. (<SERVER_HOST>, <SERVER_PORT>, <COMMAND>, <FILENAME>, <DATA_PORT>, etc…)
-4. ftserver and ftclient establish a TCP control connection on <SERVER_PORT>. (For the remainder of this description, call this connection P)
-5. ftserver waits on connection P for ftclient to send a command.
-6. ftclient sends a command (-l (list) or -g <FILENAME> (get)) on connection P.
-7. ftserver receives command on connection P.
-If ftclient sent an invalid command
-• ftserver sends an error message to ftclient on connection P, and ftclient displays the message on-screen.
-otherwise
-• ftserver initiates a TCP data connection with ftclient on <DATA_PORT>. (Call this connection Q)
-• If ftclient has sent the -l command, ftserver sends its directory to ftclient on connection Q, and ftclient displays the directory on-screen.
-• If ftclient has sent -g <FILENAME>, ftserver validates FILENAME, and either
-- sends the contents of FILENAME on connection Q. ftclient saves the file in the current default directory (handling "duplicate file name" error if necessary), and displays a "transfer complete" message on-screen
-or
-- sends an appropriate error message (“File not found”, etc.) to ftclient on connection P, and ftclient displays the message on-screen.
-• ftserver closes connection Q (don’t leave open sockets!).
-8. ftclient closes connection P (don’t leave open sockets!) and terminates.
-9. ftserver repeats from 2 (above) until terminated by a supervisor (SIGINT).
-Page 2 of 3
-Program Requirements:
-• ftserver must be written in C/C++.
-• ftclient must be written in Java or Python.
+Design and implement a simple chat system that works for one pair of users, i.e., create two programs: a chat server and a chat client. The final version of your programs must accomplish the following tasks:
+1. chatserve starts on host A.
+2. chatserve on host A waits on a port (specified by command-line) for a client request.
+3. chatclient starts on host B, specifying host A’s hostname and port number on the command line.
+4. chatclient on host B gets the user’s “handle” by initial query (a one-word name, up to 10 characters). chatclient will display this handle as a prompt on host B, and will prepend it to all messages sent to host A. e.g., “ SteveO> Hi!!”
+5. chatclient on host B sends an initial message to chatserve on host A : PORTNUM. This causes a connection to be established between Host A and Host B. Host A and host B are now peers, and may alternate sending and receiving messages. Responses from host A should have host A’s “handle” prepended.
+6. Host A responds to Host B, or closes the connection with the command “\quit”
+7. Host B responds to Host A, or closes the connection with the command “\quit”
+8. If the connection is not closed, repeat from 6.
+9. If the connection is closed, chatserve repeats from 2 (until a SIGINT is received).
+Requirements:
+• chatserve must be implemented in Java or Python
+• chatclient must be implemented in C/C++.
 • Of course, your program must be well-modularized and well-documented.
-• Your programs must run on a flip server: (flip1, flip2, flip3).engr.oregonstate.edu
-o Probably the best way to do this is to use SSH Secure Shell, Putty, or another terminal emulator to log onto access.engr.oregonstate.edu using your ENGR username/password and note which flip you get.
-o It will be easiest if you bring up two instances of the shell on the separate flip servers and use one to run the server, and the other to run the client (this is how I will be testing!).
-• You may not use sendfile or any other predefined function that makes the problem trivial.
-• Your program should be able to send a complete text file. You are not required to handle an “out of memory” error. Separate grading for short text files and long text files.
-• Use the directories in which the programs are running. Don't hard-code any directories that might be inaccessible to the graders.
+• Your programs must run on an OSU flip server (for example: flip1.engr.oregonstate.edu). Specify your testing machine in the program documentation.
+• Your programs should be able to send messages of up to 500 characters.
+• Use the directories in which the programs are running. Don't hard-code any directories, since they might be inaccessible to the graders.
+• Be sure to cite any references, and credit any collaborators.
+• Provide a README.txt with detailed instructions on how to compile, execute, and control your program.
 • Combine all program files into one *.zip archive (no .7z or .gz allowed). The .zip file should not contain any folders – only files!
-• If you use additional include-files or make-files, be sure to include them in your .zip file.
-• Create a README containing detailed instructions on how to compile and run your server and client.
-• Be absolutely sure to cite any references and credit any collaborators. I’m sick of giving failing grades for people not doing this.
-Options:
-There are many possibilities for extra credit. All extra credit must be documented and referenced in your program description and README.txt to receive any credit. Here are a few ideas to get you started:
-• Make your server multi-threaded.
-• Implement username/password access to the server.
-• Allow client to change directory on the server.
-• Transfer files additional to text files (e.g. binary files) (a text file with a non-.txt extension doesn’t count.
-• etc…
-Page 3 of 3
+page 2 of 2
 Notes:
-• Beej's Guide will be helpful. It has many things you’ll need for this assignment.
-• Don't hard-code the port numbers
-• Don’t use the well-known FTP port numbers, or 30021 or 30020, as these will be probably in use (by network services or other students).
-• We will test your system with text files only (unless your README specifies additional file types), one very large and one small.
-• If you implement extra credit features, be sure to fully describe those features, and how to use them, in your README, or you won’t receive any extra credit.
-• Programs will be accepted up to 48 hours late with a 10% penalty per 24-hour period.
-Example Execution:
-SERVER (flip1)
-CLIENT (flip2)
-Input to console
-Output
-Input to Console
-Output
-> ftserver 30021
-Server open on 30021
-> ftclient flip1 30021 –l 30020
-Connection from flip2.
-List directory requested on port 30020.
-Sending directory contents to flip2:30020
-Receiving directory structure from flip1:30020
-shortfile.txt
-longfile.txt
-> ftclient flip1 30021 –g shortfile.txt 30020
-Connection from flip2.
-File “shortfile.txt” requested on port 30020.
-Sending “shortfile.txt” to flip2:30020
-Receiving “shortfile.txt” from flip1:30020
-File transfer complete.
-> ftclient flip1 30021 –g longfileee.txt 30020
-Connection from flip2.
-File “longfileee.txt” requested on port 30020.
-File not found. Sending error message to flip2:30021
-flip1:30021 says FILE NOT FOUND
+• For your C implementation, read Beej's Guide. It has everything you need for this assignment. You will probably learn the most about socket programming by using C.
+• If you are using Python, check http://docs.python.org/release/2.6.5/library/internet.html,
+• If you are using Java, check http://docs.oracle.com/javase/tutorial/networking/sockets/index.html.
+• It’s OK to hard-code host A’s handle.
+• It’s OK to implement this system so that it requires the two users to take turns sending messages, i.e., when a user sends a message, s/he must wait for a response before sending the next message.
+• When debugging, don't use the well-known port numbers, because these will already be in use. I’d suggest using 30020 or 30021, though other students may be using these when you’re on the servers.
+• If you use additional include-files or make-files, be sure to include them in your .zip file.
+• You can test these programs using just one computer. Start the server, then start the client in a new window. You can then switch back and forth between the two terminal windows.
+• Project #1 will be accepted up to one week late with a penalty of up to 10% per day.
+Extras:
+• If you implement extra credit features, be sure to describe those features in your program documentation and README.txt or you will not receive any credit.
+• There are many possibilities for extra credit. Be sure that your program satisfies the requirements first, and then do the extra credit in separate files.
+• Extra credit possibilities include (but are not limited to) …
+- Set up your programs so that either host can make first contact.
+- Make it possible for either host to send at any time (while the connection is active) without “taking turns”.
+- Make your server multi-threaded.
+- Split the screen to show host B’s typing in one panel, and host A’s responses in the other panel.
+- Make the characters appear on the receiving host as they are being typed on the sending host (instead of waiting for the entire line to be sent).
